@@ -14,7 +14,13 @@
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
-    "paths": {}
+    "paths": {
+      "@potato-lab/ui": ["libs/ui/src/index.ts"],
+      "@potato-lab/ui/*": ["libs/ui/src/*"],
+      "@potato-lab/ui/components": ["libs/ui/src/components"],
+      "@potato-lab/lib/utils": ["libs/utils/src/index.ts"],
+      "@potato-lab/lib/utils/*": ["libs/utils/src/*"]
+    }
   },
   "exclude": ["node_modules", "tmp"]
 }
