@@ -38,7 +38,6 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - run: pnpm ci --legacy-peer-deps
       - run: npx cypress install
       - uses: nrwl/nx-set-shas@v4
 
