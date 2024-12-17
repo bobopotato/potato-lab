@@ -4,7 +4,13 @@
   "projectType": "application",
   "sourceRoot": "apps/potato-lab-web-e2e/src",
   "tags": [],
-  "implicitDependencies": ["potato-lab-web"],
+  "implicitDependencies": [
+    "potato-lab-web"
+  ],
   "// targets": "to see all targets run: nx show project potato-lab-web-e2e --web",
-  "targets": {}
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    }
+  }
 }

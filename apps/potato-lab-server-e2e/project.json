@@ -1,0 +1,62 @@
+{
+  "name": "potato-lab-server-e2e",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "implicitDependencies": [
+    "potato-lab-server"
+  ],
+  "targets": {
+    "e2e": {
+      "executor": "@nx/jest:jest",
+      "outputs": [
+        "{workspaceRoot}/coverage/{e2eProjectRoot}"
+      ],
+      "options": {
+        "jestConfig": "apps/potato-lab-server-e2e/jest.config.ts",
+        "passWithNoTests": true
+      },
+      "dependsOn": [
+        "potato-lab-server:build"
+      ]
+    },
+    "lint": {
+      "cache": true,
+      "options": {
+        "cwd": "apps/potato-lab-server-e2e",
+        "command": "eslint ."
+      },
+      "inputs": [
+        "default",
+        "^default",
+        "{workspaceRoot}/eslint.config.js",
+        "{projectRoot}/eslint.config.js",
+        "{workspaceRoot}/tools/eslint-rules/**/*",
+        {
+          "externalDependencies": [
+            "eslint"
+          ]
+        }
+      ],
+      "outputs": [
+        "{options.outputFile}"
+      ],
+      "metadata": {
+        "technologies": [
+          "eslint"
+        ],
+        "description": "Runs ESLint on project",
+        "help": {
+          "command": "pnpm exec eslint --help",
+          "example": {
+            "options": {
+              "max-warnings": 0
+            }
+          }
+        }
+      },
+      "executor": "nx:run-commands",
+      "configurations": {},
+      "parallelism": true
+    }
+  }
+}

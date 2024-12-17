@@ -1,0 +1,28 @@
+{
+  "name": "potato-lab-server",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/potato-lab-server/src",
+  "projectType": "application",
+  "tags": [],
+  "targets": {
+    "serve": {
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "dependsOn": [
+        "^build"
+      ],
+      "options": {
+        "buildTarget": "potato-lab-server:build",
+        "runBuildTargetDependencies": false
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "potato-lab-server:build:development"
+        },
+        "production": {
+          "buildTarget": "potato-lab-server:build:production"
+        }
+      }
+    }
+  }
+}
