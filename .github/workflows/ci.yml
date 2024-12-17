@@ -25,12 +25,18 @@ jobs:
       # - run: npx nx-cloud start-ci-run --distribute-on="3 linux-medium-js" --stop-agents-after="e2e-ci"
 
       # Cache node_modules
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+          run_install: false
+
       - uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: "pnpm"
 
-      - run: pnpm install
+      - name: Install dependencies
+        run: pnpm install
 
       - run: pnpm ci --legacy-peer-deps
       - run: npx cypress install
