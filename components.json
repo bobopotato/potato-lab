@@ -1,0 +1,17 @@
+{
+    "$schema": "https://ui.shadcn.com/schema.json",
+    "style": "new-york",
+    "rsc": false,
+    "tsx": true,
+    "tailwind": {
+        "config": "libs/ui/src/tailwind/tailwind.config.js",
+        "css": "libs/ui/src/styles/global.css",
+        "baseColor": "slate",
+        "cssVariables": true
+    },
+    "aliases": {
+        "components": "@potato-lab/ui/components",
+        "ui": "@potato-lab/ui/components",
+        "utils": "@potato-lab/lib/utils"
+    }
+}

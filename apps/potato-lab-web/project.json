@@ -21,6 +21,22 @@
           "buildTarget": "potato-lab-web:build:production"
         }
       }
+    },
+    "build": {
+      "executor": "@nx/next:build",
+      "outputs": [
+        "{options.outputPath}"
+      ],
+      "defaultConfiguration": "production",
+      "options": {
+        "outputPath": "dist/apps/potato-lab-web"
+      },
+      "configurations": {
+        "development": {
+          "outputPath": "apps/potato-lab-web"
+        },
+        "production": {}
+      }
     }
   }
 }
