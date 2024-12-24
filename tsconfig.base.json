@@ -15,12 +15,13 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@potato-lab/lib/utils": ["libs/utils/src/index.ts"],
+      "@potato-lab/lib/utils/*": ["libs/utils/src/*"],
+      "@potato-lab/shared-types": ["libs/shared-types/src/index.ts"],
       "@potato-lab/ui": ["libs/ui/src/index.ts"],
       "@potato-lab/ui/*": ["libs/ui/src/*"],
-      "@potato-lab/ui/components": ["libs/ui/src/components"],
-      "@potato-lab/lib/utils": ["libs/utils/src/index.ts"],
-      "@potato-lab/lib/utils/*": ["libs/utils/src/*"]
+      "@potato-lab/ui/components": ["libs/ui/src/components/*"]
     }
   },
-  "exclude": ["node_modules", "tmp"]
+  "exclude": ["node_modules", "tmp", "tsconfig.json"]
 }
