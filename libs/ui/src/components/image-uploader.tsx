@@ -26,8 +26,7 @@ import {
 import { ImagePlus, CircleXIcon } from "lucide-react";
 import { cn } from "@potato-lab/lib/utils";
 import { Slider } from "./slider";
-import Cropper from "react-easy-crop";
-import { Point, Area } from "react-easy-crop/types";
+import Cropper, { Point, Area } from "react-easy-crop";
 import {
   Dialog,
   DialogContent,
