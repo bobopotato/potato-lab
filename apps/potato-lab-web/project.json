@@ -17,6 +17,9 @@
         "development": {
           "buildTarget": "potato-lab-web:build:development"
         },
+        "staging": {
+          "buildTarget": "potato-lab-web:build:staging"
+        },
         "production": {
           "buildTarget": "potato-lab-web:build:production"
         }

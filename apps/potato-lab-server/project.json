@@ -19,6 +19,9 @@
         "development": {
           "buildTarget": "potato-lab-server:build:development"
         },
+        "staging": {
+          "buildTarget": "potato-lab-server:build:staging"
+        },
         "production": {
           "buildTarget": "potato-lab-server:build:production"
         }

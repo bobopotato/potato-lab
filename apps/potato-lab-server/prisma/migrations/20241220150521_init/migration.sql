@@ -4,9 +4,9 @@ CREATE TYPE "SourcePlatform" AS ENUM ('BINANCE', 'BYBIT', 'MEDX');
 -- CreateTable
 CREATE TABLE "User" (
     "id" SERIAL NOT NULL,
-    "name" TEXT NOT NULL,
     "email" TEXT NOT NULL,
     "password" TEXT NOT NULL,
+    "name" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
@@ -43,6 +43,9 @@ CREATE TABLE "_FavouritePortfolio" (
 
     CONSTRAINT "_FavouritePortfolio_AB_pkey" PRIMARY KEY ("A","B")
 );
+
+-- CreateIndex
+CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Portfolio_id_key" ON "Portfolio"("id");

@@ -6,6 +6,7 @@
 
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["prismaSchemaFolder", "driverAdapters"]
 }
 
 datasource db {
@@ -21,9 +22,10 @@ enum SourcePlatform {
 
 model User {
   id Int @id @default(autoincrement())
-  name String
-  email String
+  email String @unique
   password String
+  name String
+  imageUrl String?
   createdAt DateTime @default(now())
   portfolioId Portfolio[] @relation ("FavouritePortfolio")
 }
