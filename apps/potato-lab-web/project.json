@@ -35,9 +35,8 @@
         "outputPath": "dist/apps/potato-lab-web"
       },
       "configurations": {
-        "development": {
-          "outputPath": "apps/potato-lab-web"
-        },
+        "development": {},
+        "staging": {},
         "production": {}
       }
     }

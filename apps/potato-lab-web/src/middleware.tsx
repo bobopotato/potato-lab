@@ -1,6 +1,6 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
-import { getUserCookies } from "./components/auth/actions";
+import { getUserCookies } from "./server/cookies-actions";
 
 const publicRoute = ["/sign-in", "/sign-up", "/forgot-password"];
 

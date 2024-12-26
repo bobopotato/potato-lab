@@ -1,3 +1,9 @@
+/**
+ * This tsconfig is used to build the server
+ * The references are used to build the server, so that the types of the app and the specs are available
+ * Without this, the types of the app and the specs would not be available when building the server
+ * See https://github.com/microsoft/TypeScript/issues/39564
+ */
 {
   "extends": "../../tsconfig.base.json",
   "files": [],
@@ -11,6 +17,7 @@
     }
   ],
   "compilerOptions": {
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "strict": true
   }
 }

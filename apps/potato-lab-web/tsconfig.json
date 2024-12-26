@@ -36,7 +36,8 @@
     "../../apps/potato-lab-web/.next/types/**/*.ts",
     "../../dist/apps/potato-lab-web/.next/types/**/*.ts",
     "next-env.d.ts",
-    ".next/types/**/*.ts"
+    ".next/types/**/*.ts",
+    "../../dist/apps/potato-lab-web/.next/.next/types/**/*.ts"
   ],
   "exclude": [
     "node_modules",
