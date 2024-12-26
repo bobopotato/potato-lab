@@ -9,12 +9,10 @@ export const baseConfig = {
   refreshTokenSecret: process.env.REFRESH_TOKEN_SECRET ?? "",
 
   awsS3AccessKeyId: process.env.AWS_S3_ACCESS_KEY_ID ?? "",
-  awsS3AccessKeySecret: process.env.AWS_S3_ACCESS_KEY_SECRET ?? "",
+  awsS3AccessKeySecret: process.env.AWS_S3_ACCESS_KEY_SECRET ?? ""
 
   // awsServerlessAccessKeyId: process.env.AWS_SERVERLESS_ACCESS_KEY_ID!,
   // awsServerlessAccessKeySecret: process.env.AWS_SERVERLESS_ACCESS_KEY_SECRET!,
-
-  databaseUrl: process.env.DATABASE_URL ?? ""
 };
 
 export enum TokenExpiration {

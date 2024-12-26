@@ -1,5 +1,5 @@
-import * as drizzleSchema from "apps/potato-lab-server/drizzle/db/schema";
 import { InferSelectModel } from "drizzle-orm";
+import * as drizzleSchema from "@potato-lab/db";
 // import { createSelectSchema } from "drizzle-zod";
 // import { z } from "zod";
 

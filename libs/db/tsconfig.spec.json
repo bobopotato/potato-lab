@@ -3,13 +3,13 @@
   "compilerOptions": {
     "outDir": "../../dist/out-tsc",
     "module": "commonjs",
-    "types": ["node", "express"]
+    "moduleResolution": "node10",
+    "types": ["jest", "node"]
   },
-  "include": ["src/**/*.ts"],
-  "exclude": [
+  "include": [
     "jest.config.ts",
-    "src/**/*.spec.ts",
     "src/**/*.test.ts",
-    ".serverless/**"
+    "src/**/*.spec.ts",
+    "src/**/*.d.ts"
   ]
 }

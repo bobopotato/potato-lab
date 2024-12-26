@@ -14,6 +14,7 @@ const errorHandler = (
     message: err.message,
     data: err
   });
+  next();
 };
 
 export default errorHandler;

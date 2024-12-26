@@ -6,6 +6,7 @@ import customMiddlewareParams from "../middlewares/custom-middleware-params.midd
 
 const WHITE_LISTED_DOMAIN = ["http://localhost:4200", ""];
 
+
 export const appGenerator = (
   {
     isPublicRoute = false

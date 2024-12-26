@@ -1,10 +1,10 @@
 import "dotenv/config";
 import { defineConfig } from "drizzle-kit";
-import { baseConfig } from "./src/configs/index";
+import { baseConfig } from "./src/drizzle/configs";
 
 export default defineConfig({
-  out: "apps/potato-lab-server/drizzle/migrations",
-  schema: "apps/potato-lab-server/drizzle/db/schema.ts",
+  out: "libs/db/src/drizzle/migrations",
+  schema: "libs/db/src/drizzle/db/schema.ts",
   dialect: "postgresql",
   dbCredentials: {
     url: baseConfig.databaseUrl

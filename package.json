@@ -9,10 +9,10 @@
     "api": "nx run potato-lab-server:serve",
     "ui:add": "cross-env TS_NODE_PROJECT=./tsconfig.base.json pnpx shadcn@latest add",
     "ui:generate": "node ./libs/ui/generator.js",
-    "db:generate": "npx drizzle-kit generate --config=./apps/potato-lab-server/drizzle.config.ts",
-    "db:migrate-dev": "dotenv -e ./apps/potato-lab-server/.env.development -- npx drizzle-kit migrate --config=./apps/potato-lab-server/drizzle.config.ts",
-    "db:migrate-staging": "dotenv -e ./apps/potato-lab-server/.env.staging -- npx drizzle-kit migrate --config=./apps/potato-lab-server/drizzle.config.ts",
-    "db:migrate-prod": "dotenv -e ./apps/potato-lab-server/.env.production -- npx drizzle-kit migrate --config=./apps/potato-lab-server/drizzle.config.ts"
+    "db:generate": "npx drizzle-kit generate --config=./libs/db/drizzle.config.ts",
+    "db:migrate-dev": "dotenv -e ./libs/db/.env.development -- npx drizzle-kit migrate --config=./libs/db/drizzle.config.ts",
+    "db:migrate-staging": "dotenv -e ./libs/db/.env.staging -- npx drizzle-kit migrate --config=./libs/db/drizzle.config.ts",
+    "db:migrate-prod": "dotenv -e ./libs/db/.env.production -- npx drizzle-kit migrate --config=./libs/db/drizzle.config.ts"
   },
   "private": true,
   "dependencies": {
