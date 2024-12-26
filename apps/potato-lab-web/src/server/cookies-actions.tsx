@@ -1,11 +1,8 @@
 "use server";
 
 import { z } from "zod";
-import { SignInReq } from "@potato-lab/shared-types";
-import { signIn as signInApi } from "../../utils/api.util";
 import { cookies } from "next/headers";
 import { publicUserDataSchema, PublicUserData } from "@potato-lab/shared-types";
-import { getErrorMessage } from "../../utils/error.util";
 
 export const getUserCookies = async (): Promise<{
   data?: { user: PublicUserData; accessToken: string };
@@ -29,23 +26,20 @@ export const getUserCookies = async (): Promise<{
   return result;
 };
 
-export const signIn = async (data: SignInReq) => {
-  try {
-    const { accessToken, userData } = await signInApi(data);
-
-    const cookieStore = cookies();
-    cookieStore.set("user", JSON.stringify(userData), {
-      expires: new Date(8640000000000000)
-    });
-    cookieStore.set("accessToken", accessToken, {
-      expires: new Date(8640000000000000)
-    });
-  } catch (error) {
-    throw new Error(getErrorMessage(error, "Something went wrong"));
-  }
+export const setUserCookies = async (
+  userData: PublicUserData,
+  accessToken: string
+) => {
+  const cookieStore = cookies();
+  cookieStore.set("user", JSON.stringify(userData), {
+    expires: new Date(8640000000000000)
+  });
+  cookieStore.set("accessToken", accessToken, {
+    expires: new Date(8640000000000000)
+  });
 };
 
-export const signOut = async () => {
+export const clearUserCookies = async () => {
   const cookieStore = cookies();
   cookieStore.delete("user");
   cookieStore.delete("accessToken");

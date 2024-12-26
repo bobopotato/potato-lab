@@ -9,11 +9,45 @@ const ACCEPTED_IMAGE_TYPES = [
   "image/webp"
 ];
 
-export const imageSchema = z
-  .any()
-  .refine((file) => file.size !== 0, "Image is required.")
-  .refine((file) => file.size <= MAX_FILE_SIZE, `Max file size is 1MB.`)
-  .refine(
-    (file) => ACCEPTED_IMAGE_TYPES.includes(file.type || file.mimetype), // Multer.File only got mimetype
-    "Only .jpg, .jpeg, .png and .webp files are accepted."
-  );
+export const getImageSchema = (isOptional = false) => {
+  return z.any().superRefine((file, ctx) => {
+    if (file.size !== 0) {
+      // continue next step
+      if (file.size > MAX_FILE_SIZE) {
+        console.log(file.size);
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: `Max file size is ${MAX_FILE_SIZE / 1000000}MB.`,
+          fatal: true
+        });
+        return z.NEVER;
+      }
+
+      // Multer.File only got mimetype
+      if (!ACCEPTED_IMAGE_TYPES.includes(file.type || file.mimetype)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: `Only ${ACCEPTED_IMAGE_TYPES.map(
+            (type) => type.split("/")[1]
+          ).join(",")} files are accepted.`,
+          fatal: true
+        });
+        return z.NEVER;
+      }
+
+      return z.NEVER;
+    }
+
+    if (isOptional) {
+      // skip whole check
+      return z.NEVER;
+    }
+
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: "Image is required.",
+      fatal: true
+    });
+    return z.NEVER;
+  });
+};

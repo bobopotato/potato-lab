@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { imageSchema } from "./common.schema";
+import { getImageSchema } from "./common.schema";
 
 export const signInReqSchema = z.object({
   email: z.string().email(),
@@ -10,24 +10,11 @@ export const signUpReqSchema = z.object({
   email: z.string().email(),
   password: z.string().min(6),
   name: z.string().min(6),
-  image: imageSchema
+  image: getImageSchema(true)
 });
 
-export const signUpReqForBackendSchema = z
-  .instanceof(FormData)
-  .transform((formData) => {
-    const email = formData.get("email") as string;
-    const password = formData.get("password") as string;
-    const name = formData.get("name") as string;
-    const image = formData.get("image") as File;
-    const obj = { email, password, name, image };
-
-    const parseResult = signUpReqSchema.parse(obj);
-    return parseResult;
-  });
-
 export const publicUserDataSchema = z.object({
-  id: z.number(),
+  id: z.string(),
   email: z.string(),
   name: z.string(),
   imageUrl: z.string().nullable(),

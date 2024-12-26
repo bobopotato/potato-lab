@@ -39,7 +39,7 @@ type SignUpReqWithConfirmPassword = z.infer<typeof schemaWithConfirmPassword>;
 const SignUp = () => {
   const imageRef = useRef<ImageUploaderComponentRef>();
 
-  const { isPending: loadingSignUp, mutateAsync: signUp } = useMutation({
+  const { isPending: loadingSignUp, mutate: signUp } = useMutation({
     mutationKey: ["sign-up"],
     mutationFn: signUpApi,
     onSuccess: () => {
@@ -54,8 +54,9 @@ const SignUp = () => {
       });
     },
     onError: (error: AxiosError) => {
+      const errMsg = getErrorMessage(error);
       toast.error("Something went wrong. Please try again.", {
-        description: getErrorMessage(error)
+        description: errMsg && errMsg
       });
     }
   });

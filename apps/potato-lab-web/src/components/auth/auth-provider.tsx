@@ -1,17 +1,19 @@
 "use client";
 
 import React, { useContext, useEffect, useMemo, useState } from "react";
-import { User } from "@prisma/client";
-import { useRouter, usePathname } from "next/navigation";
+import { User } from "@potato-lab/shared-types";
+import { useRouter } from "next/navigation";
 import {
-  signIn as _signIn,
   getUserCookies,
-  signOut as _signOut,
-  forceUserSignOut
-} from "./actions";
+  clearUserCookies,
+  setUserCookies
+} from "../../server/cookies-actions";
+import { signIn as signInApi } from "../../utils/api.util";
+
 import { SignInReq } from "@potato-lab/shared-types";
 import { toast } from "sonner";
 import { UseMutateFunction, useMutation } from "@tanstack/react-query";
+import { getErrorMessage } from "../../utils/error.util";
 
 interface AuthContext {
   error: string | null;
@@ -62,11 +64,14 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setUser(user);
   };
 
-  const { isPending: isLoadingSignIn, mutateAsync: signIn } = useMutation({
+  const { isPending: isLoadingSignIn, mutate: signIn } = useMutation({
     mutationKey: ["sign-in"],
-    mutationFn: _signIn,
+    mutationFn: async (data: SignInReq) => {
+      const { userData, accessToken } = await signInApi(data);
+      await setUserCookies(userData, accessToken);
+    },
     onError: (error) => {
-      toast.error(error.message);
+      toast.error(getErrorMessage(error, "Something went wrong"));
     },
     onSuccess: async () => {
       await initUser();
@@ -75,9 +80,9 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   });
 
   const signOut = async () => {
-    await _signOut();
-    setUser(null);
+    await clearUserCookies();
     localStorage.removeItem("isLoggedIn");
+    setUser(null);
   };
 
   return (

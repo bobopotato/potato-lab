@@ -1,5 +1,6 @@
 import { StatusCodes } from "http-status-codes";
 import { Request, Response, NextFunction } from "express";
+import { PublicUserData } from "@potato-lab/shared-types";
 
 interface CustomResponseContent<T = unknown> {
   success?: boolean;
@@ -17,10 +18,17 @@ declare global {
       unauthorized<T>(content?: CustomResponseContent<T>): void;
       internalServerError<T>(content?: CustomResponseContent<T>): void;
     }
+    interface Request {
+      user: PublicUserData;
+    }
   }
 }
 
-const customResponse = (req: Request, res: Response, next: NextFunction) => {
+const customMiddlewareParams = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   res.ok = (content) => {
     res
       .status(StatusCodes.OK)
@@ -48,4 +56,4 @@ const customResponse = (req: Request, res: Response, next: NextFunction) => {
   next();
 };
 
-export default customResponse;
+export default customMiddlewareParams;

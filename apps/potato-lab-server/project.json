@@ -6,24 +6,47 @@
   "tags": [],
   "targets": {
     "serve": {
-      "executor": "@nx/js:node",
+      "executor": "nx:run-commands",
       "defaultConfiguration": "development",
-      "dependsOn": [
-        "^build"
-      ],
       "options": {
-        "buildTarget": "potato-lab-server:build",
-        "runBuildTargetDependencies": false
+        "cwd": "apps/potato-lab-server",
+        "color": true,
+        "command": "sls offline start"
       },
       "configurations": {
         "development": {
-          "buildTarget": "potato-lab-server:build:development"
+          "command": "sls offline start"
         },
         "staging": {
-          "buildTarget": "potato-lab-server:build:staging"
+          "command": "sls offline start --stage staging"
         },
         "production": {
-          "buildTarget": "potato-lab-server:build:production"
+          "command": "sls offline start --stage production"
+        }
+      }
+    },
+    "build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "apps/potato-lab-server",
+        "color": true,
+        "command": "sls package"
+      }
+    },
+    "deploy": {
+      "executor": "nx:run-commands",
+      "defaultConfiguration": "staging",
+      "options": {
+        "cwd": "apps/potato-lab-server",
+        "color": true,
+        "command": "sls deploy"
+      },
+      "configurations": {
+        "staging": {
+          "command": "sls deploy --stage staging --region ap-southeast-1"
+        },
+        "production": {
+          "command": "sls deploy --stage production --region ap-southeast-1"
         }
       }
     }

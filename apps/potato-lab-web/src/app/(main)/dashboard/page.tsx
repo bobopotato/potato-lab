@@ -20,7 +20,11 @@ function Dashboard() {
       <p>Dashboard </p>
       <Button onClick={() => setCookie()}>Set Cookie</Button>
       {/* <Button onClick={() => refreshToken()}>Refresh Token</Button> */}
-      <Button onClick={() => signIn({ email: "qwe123", password: "password" })}>
+      <Button
+        onClick={() =>
+          signIn({ email: "qwe123@gmail.com", password: "qwe123" })
+        }
+      >
         Sign In
       </Button>
       <Button onClick={() => toast.error("Something went wrong")}>Toast</Button>

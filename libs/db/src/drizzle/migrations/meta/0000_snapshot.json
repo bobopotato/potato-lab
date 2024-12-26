@@ -1,0 +1,286 @@
+{
+  "id": "5f5c4668-4271-49ba-808e-9051329c200f",
+  "prevId": "00000000-0000-0000-0000-000000000000",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.UserFavouritePortfolio": {
+      "name": "UserFavouritePortfolio",
+      "schema": "",
+      "columns": {
+        "userId": {
+          "name": "userId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "portfolioId": {
+          "name": "portfolioId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "UserFavouritePortfolio_userId_User_id_fk": {
+          "name": "UserFavouritePortfolio_userId_User_id_fk",
+          "tableFrom": "UserFavouritePortfolio",
+          "tableTo": "User",
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "UserFavouritePortfolio_portfolioId_Portfolio_id_fk": {
+          "name": "UserFavouritePortfolio_portfolioId_Portfolio_id_fk",
+          "tableFrom": "UserFavouritePortfolio",
+          "tableTo": "Portfolio",
+          "columnsFrom": [
+            "portfolioId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "UserFavouritePortfolio_userId_portfolioId_pk": {
+          "name": "UserFavouritePortfolio_userId_portfolioId_pk",
+          "columns": [
+            "userId",
+            "portfolioId"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.Portfolio": {
+      "name": "Portfolio",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "profileUrl": {
+          "name": "profileUrl",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "performance": {
+          "name": "performance",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "sourceUrl": {
+          "name": "sourceUrl",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "sourcePlatform": {
+          "name": "sourcePlatform",
+          "type": "SourcePlatform",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.Position": {
+      "name": "Position",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "symbol": {
+          "name": "symbol",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "size": {
+          "name": "size",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "entryPrice": {
+          "name": "entryPrice",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "margin": {
+          "name": "margin",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "portfolioId": {
+          "name": "portfolioId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "Position_portfolioId_Portfolio_id_fk": {
+          "name": "Position_portfolioId_Portfolio_id_fk",
+          "tableFrom": "Position",
+          "tableTo": "Portfolio",
+          "columnsFrom": [
+            "portfolioId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.User": {
+      "name": "User",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "email": {
+          "name": "email",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "password": {
+          "name": "password",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "imageUrl": {
+          "name": "imageUrl",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "name_idx": {
+          "name": "name_idx",
+          "columns": [
+            {
+              "expression": "name",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "email_idx": {
+          "name": "email_idx",
+          "columns": [
+            {
+              "expression": "email",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {
+    "public.SourcePlatform": {
+      "name": "SourcePlatform",
+      "schema": "public",
+      "values": [
+        "BINANCE",
+        "BYBIT",
+        "MEDX"
+      ]
+    }
+  },
+  "schemas": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}

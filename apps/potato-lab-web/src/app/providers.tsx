@@ -24,7 +24,7 @@ const RootProviders = ({ children }: { children: React.ReactNode }) => {
           </SidebarProvider>
         </ThemeProvider>
       </AuthProvider>
-      <Toaster />
+      <Toaster richColors closeButton />
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   );

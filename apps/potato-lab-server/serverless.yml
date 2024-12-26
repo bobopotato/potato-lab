@@ -1,0 +1,34 @@
+service: serverless-potato-lab
+frameworkVersion: "4"
+useDotenv: true
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  timeout: 15
+
+functions:
+  authApi:
+    handler: ./src/index.authHandler
+    events:
+      - httpApi:
+          path: /auth/{proxy+}
+          method: "*"
+  dashboardApi:
+    handler: ./src/index.dashboardHandler
+    events:
+      - httpApi:
+          path: /dashboard/{proxy+}
+          method: "*"
+
+custom:
+  dotenv:
+    exclude:
+      - AWS_ACCESS_KEY_ID
+      - AWS_SECRET_ACCESS_KEY
+      - AWS_S3_ACCESS_KEY_ID
+      - AWS_S3_ACCESS_KEY_SECRET
+
+plugins:
+  - serverless-offline
+  - serverless-dotenv-plugin

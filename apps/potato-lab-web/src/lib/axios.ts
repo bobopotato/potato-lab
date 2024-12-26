@@ -4,11 +4,11 @@ import {
   forceUserSignOut,
   getUserCookies,
   updateAccessTokenCookie
-} from "../components/auth/actions";
+} from "../server/cookies-actions";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
-const axiosBase = axios.create({
+export default axios.create({
   baseURL: BASE_URL,
   headers: {
     "Content-Type": "application/json"
@@ -24,35 +24,6 @@ const axiosAuth = axios.create({
 });
 
 const isServerSide = () => typeof window === "undefined";
-
-axiosBase.interceptors.response.use(async (res) => {
-  // foward the cookie from server components
-  if (isServerSide() && res.headers["set-cookie"]?.length) {
-    const { cookies } = await import("next/headers");
-    const cookieStore = cookies();
-    // reset cookie
-    res.headers["set-cookie"].forEach((cookie) => {
-      const [nameValue, ...attributes] = cookie.split(";");
-      const [name, value] = nameValue.split("=");
-
-      if (name !== "refreshToken") {
-        return;
-      }
-
-      const attributesValue = attributes.map((attr) => attr.split("=")?.[1]);
-      const [maxAge, path, expires, , sameSite] = attributesValue;
-
-      cookieStore.set(name.trim(), value.trim(), {
-        maxAge: Number(maxAge),
-        path: path.trim(),
-        expires: new Date(expires),
-        httpOnly: true,
-        sameSite: sameSite?.trim()?.toLowerCase() as "lax" | "strict" | "none"
-      });
-    });
-  }
-  return res;
-});
 
 axiosAuth.interceptors.request.use(async (config) => {
   let accessToken;
@@ -76,7 +47,7 @@ axiosAuth.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
     if (
-      error.response.status === HttpStatusCode.Forbidden &&
+      error.response?.status === HttpStatusCode.Forbidden &&
       !originalRequest._retry
     ) {
       originalRequest._retry = true;
@@ -102,5 +73,4 @@ const updateAccessToken = async (accessToken: string) => {
   await updateAccessTokenCookie(accessToken);
 };
 
-export default axiosBase;
 export { axiosAuth };
