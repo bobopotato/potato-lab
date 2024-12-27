@@ -1,14 +1,24 @@
-import "dotenv/config";
 import { defineConfig } from "drizzle-kit";
-import { baseConfig } from "./src/drizzle/configs";
+import { resolve } from "path";
+import { Config } from "drizzle-kit";
+
+export const createDatabaseConfig = (databaseUrl: string): Config => {
+  return defineConfig({
+    dialect: "postgresql",
+    verbose: true,
+    strict: true,
+    schema: resolve(__dirname, "./src/drizzle/db/schema.ts"),
+    out: resolve(__dirname, "./src/drizzle/migrations"),
+    dbCredentials: {
+      url: databaseUrl
+    }
+  });
+};
 
 export default defineConfig({
-  out: "libs/db/src/drizzle/migrations",
-  schema: "libs/db/src/drizzle/db/schema.ts",
   dialect: "postgresql",
-  dbCredentials: {
-    url: baseConfig.databaseUrl
-  },
   verbose: true,
-  strict: true
+  strict: true,
+  schema: "./src/drizzle/db/schema.ts",
+  out: "./src/drizzle/migrations"
 });

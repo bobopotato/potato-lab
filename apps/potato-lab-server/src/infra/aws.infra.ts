@@ -6,7 +6,7 @@ export const AWS_REGION = "ap-southeast-1";
 export const s3Client = new S3Client({
   region: AWS_REGION,
   credentials: {
-    accessKeyId: baseConfig.awsS3AccessKeyId,
-    secretAccessKey: baseConfig.awsS3AccessKeySecret
+    accessKeyId: baseConfig.awsAccessKeyId,
+    secretAccessKey: baseConfig.awsAccessKeySecret
   }
 });

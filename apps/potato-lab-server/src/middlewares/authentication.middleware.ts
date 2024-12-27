@@ -16,7 +16,7 @@ const authenticateToken = (req: Request, res: Response, next: NextFunction) => {
     req.user = user;
     next();
   } catch {
-    res.sendStatus(403);
+    res.unauthorized();
     return;
   }
 };

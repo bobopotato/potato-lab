@@ -47,7 +47,7 @@ axiosAuth.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
     if (
-      error.response?.status === HttpStatusCode.Forbidden &&
+      error.response?.status === HttpStatusCode.Unauthorized &&
       !originalRequest._retry
     ) {
       originalRequest._retry = true;
