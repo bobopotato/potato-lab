@@ -10,6 +10,7 @@ const errorHandler = (
   console.log("=============");
   console.error({ message: err.message });
   console.error({ err });
+  console.info({ req });
   res.internalServerError({
     message: err.message,
     data: err

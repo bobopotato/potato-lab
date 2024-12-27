@@ -7,12 +7,23 @@
   "targets": {
     "build": {
       "executor": "@nx/js:tsc",
-      "outputs": ["{options.outputPath}"],
+      "outputs": [
+        "{options.outputPath}"
+      ],
       "options": {
         "outputPath": "dist/libs/db",
         "main": "libs/db/src/index.ts",
         "tsConfig": "libs/db/tsconfig.lib.json",
-        "assets": ["libs/db/*.md"]
+        "assets": [
+          "libs/db/*.md"
+        ]
+      }
+    },
+    "db:generate": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "drizzle-kit generate --config=./drizzle.config.ts",
+        "cwd": "libs/db"
       }
     }
   }

@@ -26,6 +26,10 @@ export const signUp = async (req: Request, res: Response) => {
 };
 
 export const signIn = async (req: Request, res: Response) => {
+  console.log(`halo here`);
+  console.log({
+    test: process.env
+  });
   const { email, password } = signInReqSchema.parse(req.body);
   const user = await getUserByEmail(email);
 

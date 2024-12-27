@@ -39,7 +39,7 @@
       "options": {
         "cwd": "apps/potato-lab-server",
         "color": true,
-        "command": "sls deploy"
+        "command": "sls deploy --stage staging --region ap-southeast-1"
       },
       "configurations": {
         "staging": {
@@ -48,6 +48,19 @@
         "production": {
           "command": "sls deploy --stage production --region ap-southeast-1"
         }
+      }
+    },
+    "db:migrate": {
+      "executor": "nx:run-commands",
+      "defaultConfiguration": "development",
+      "options": {
+        "command": "drizzle-kit migrate --config=./src/db/index.ts",
+        "cwd": "apps/potato-lab-server"
+      },
+      "configurations": {
+        "development": {},
+        "staging": {},
+        "production": {}
       }
     }
   }
