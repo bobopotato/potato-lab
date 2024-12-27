@@ -1,7 +1,12 @@
-name: CI
+name: CI for PR
 
 on:
   pull_request:
+    branches:
+      - staging
+    types:
+      - opened
+      - synchronize
 
 permissions:
   actions: read
