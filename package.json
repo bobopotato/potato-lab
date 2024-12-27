@@ -4,7 +4,7 @@
   "license": "MIT",
   "scripts": {
     "prepare": "npx husky install",
-    "lint": "nx run-many --target=lint --all",
+    "lint": "nx run-many -t lint --all",
     "web": "nx run potato-lab-web:serve",
     "api": "nx run potato-lab-server:serve",
     "ui:add": "cross-env TS_NODE_PROJECT=./tsconfig.base.json pnpx shadcn@latest add",
