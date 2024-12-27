@@ -42,10 +42,8 @@ jobs:
 
       - name: Deploy
         run: |
-          export CURRENT_BRANCH=$(git branch --show-current)
           echo "Deploying to Staging Environment" 
-          echo "Current Branch is $CURRENT_BRANCH"
           echo "Previous PR Branch was ${{ steps.get-pr-branch.outputs.pr_branch }}"
-          npx nx affected -t deploy --base=origin/$CURRENT_BRANCH --head=${{ steps.get-pr-branch.outputs.pr_branch }}
+          npx nx affected -t deploy --base=origin/staging --head=${{ steps.get-pr-branch.outputs.pr_branch }}
         env:
           SERVERLESS_ACCESS_KEY: ${{ vars.SERVERLESS_ACCESS_KEY }}
