@@ -1,7 +1,8 @@
 // import { db } from "../../../drizzle/db";
+import { db } from "../../db";
 import { encryptPassword } from "./auth.util";
 import { s3UploadFile } from "../../utils/aws.util";
-import { db, userTable } from "@potato-lab/db";
+import { userTable } from "@potato-lab/db";
 import { eq } from "drizzle-orm";
 import { User } from "@potato-lab/shared-types";
 
