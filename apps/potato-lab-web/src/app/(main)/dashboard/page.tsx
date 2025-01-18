@@ -2,14 +2,12 @@
 
 import { Button } from "@potato-lab/ui";
 import { setCookie, signIn } from "../../../utils/api.util";
-import { useState } from "react";
+import { useEffect } from "react";
 import { toast } from "sonner";
 import { axiosAuth } from "../../../lib/axios";
 
 function Dashboard() {
-  const [testError, setTestError] = useState(false);
-
-  if (testError) throw new Error("test error.tsx");
+  useEffect(() => console.log(`zzzz`), []);
 
   const testAuthApi = async () => {
     await axiosAuth.post("/dashboard/test-auth");

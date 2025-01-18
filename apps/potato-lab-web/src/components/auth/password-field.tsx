@@ -51,6 +51,7 @@ const PasswordField = <T extends PasswordFieldValues>({
                 id={name}
                 type={showPassword ? "text" : "password"}
                 className="pr-12"
+                autoComplete={name}
                 {...field}
               />
             </FormControl>
@@ -67,7 +68,7 @@ const PasswordField = <T extends PasswordFieldValues>({
         <div>
           <EyeIcon className={cn(" scale-100", showPassword && "scale-0")} />
           <EyeClosedIcon
-            className={cn(" absolute scale-0", showPassword && "scale-100")}
+            className={cn("absolute scale-0", showPassword && "scale-100")}
           />
         </div>
       </Button>

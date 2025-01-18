@@ -8,10 +8,20 @@ export const baseConfig = {
   accessTokenSecret: process.env.ACCESS_TOKEN_SECRET ?? "",
   refreshTokenSecret: process.env.REFRESH_TOKEN_SECRET ?? "",
 
-  awsAccessKeyId: process.env.AWS_ACCESS_KEY_ID ?? "",
-  awsAccessKeySecret: process.env.AWS_SECRET_ACCESS_KEY ?? "",
+  databaseUrl: process.env.DATABASE_URL ?? "",
 
-  databaseUrl: process.env.DATABASE_URL ?? ""
+  baseAwsLambdaUrl: process.env.BASE_AWS_LAMBDA_URL ?? "",
+
+  awsJobScrapperAnalyzeQueueName:
+    process.env.AWS_SQS_JOB_SCRAPPER_ANALYZE_QUEUE_NAME ?? "",
+  awsJobScrapperProcessQueueName:
+    process.env.AWS_SQS_JOB_SCRAPPER_PROCESS_QUEUE_NAME ?? "",
+
+  awsRegion: process.env.AWS_REGION ?? "",
+
+  awsScrapperLambdaArn: process.env.AWS_SCRAPPER_LAMBDA_ARN ?? "",
+  awsScrapperLambdaName: process.env.AWS_SCRAPPER_LAMBDA_NAME ?? "",
+  awsRuleArn: process.env.AWS_RULE_ARN ?? ""
 };
 
 export enum TokenExpiration {

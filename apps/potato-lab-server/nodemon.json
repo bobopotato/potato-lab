@@ -1,0 +1,6 @@
+{
+    "watch": [
+        "apps/potato-lab-server/"
+    ],
+    "ext": "js, ts, json, yml"
+}

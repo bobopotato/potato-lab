@@ -15,10 +15,11 @@ export const signUpReqSchema = z.object({
 
 export const publicUserDataSchema = z.object({
   id: z.string(),
-  email: z.string(),
+  email: z.string().email(),
   name: z.string(),
   imageUrl: z.string().nullable(),
-  createdAt: z.union([z.date(), z.string().transform((d) => new Date(d))])
+  createdAt: z.union([z.date(), z.string().transform((d) => new Date(d))]),
+  updatedAt: z.union([z.date(), z.string().transform((d) => new Date(d))])
 });
 
 export type SignInReq = z.infer<typeof signInReqSchema>;

@@ -9,14 +9,93 @@ import {
   jsonb,
   index,
   uniqueIndex,
-  primaryKey
+  primaryKey,
+  text,
+  boolean
 } from "drizzle-orm/pg-core";
 
-export const SourcePlatform = pgEnum("SourcePlatform", [
-  "BINANCE",
-  "BYBIT",
-  "MEDX"
-]);
+const enumToPgEnum = <T extends Record<string, any>>(
+  myEnum: T
+): [T[keyof T], ...T[keyof T][]] => {
+  return Object.values(myEnum).map((value: any) => `${value}`) as any;
+};
+
+interface _SchedulerRecord {
+  [key: string]: {
+    totalCount: number;
+    currentCount: number;
+    failedCount: number;
+  };
+}
+
+export enum StatusEnum {
+  ACTIVE = "ACTIVE",
+  INACTIVE = "INACTIVE"
+}
+
+export enum CryptoSourcePlatformEnum {
+  BINANCE = "BINANCE",
+  BYBIT = "BYBIT",
+  MEDX = "MEDX"
+}
+
+export enum JobSourcePlatformEnum {
+  JOBSTREET = "JOBSTREET",
+  INDEED = "INDEED"
+}
+
+export const SourcePlatformType = {
+  ...CryptoSourcePlatformEnum,
+  ...JobSourcePlatformEnum
+};
+
+export enum SchedulerTypeEnum {
+  JOBS_SCRAPPER = "JOBS_SCRAPPER",
+  CRYPTO_SCRAPPER = "CRYPTO_SCRAPPER"
+}
+
+export enum SchedulerFrequencyEnum {
+  HOURLY = "HOURLY",
+  DAILY = "DAILY",
+  CUSTOM = "CUSTOM"
+}
+
+export enum JobListingStatusEnum {
+  VALID = "VALID",
+  EXPIRED = "EXPIRED"
+}
+
+export const Status = pgEnum("Status", enumToPgEnum(StatusEnum));
+
+export const CryptoSourcePlatform = pgEnum(
+  "CryptoSourcePlatform",
+  enumToPgEnum(CryptoSourcePlatformEnum)
+);
+
+export const JobSourcePlatform = pgEnum(
+  "JobSourcePlatform",
+  enumToPgEnum(JobSourcePlatformEnum)
+);
+
+export const SourcePlatform = pgEnum(
+  "SourcePlatform",
+  enumToPgEnum(SourcePlatformType)
+);
+
+export const SchedulerType = pgEnum(
+  "SchedulerType",
+  enumToPgEnum(SchedulerTypeEnum)
+);
+
+export const SchedulerFrequency = pgEnum(
+  "SchedulerFrequency",
+  enumToPgEnum(SchedulerFrequencyEnum)
+);
+
+export const JobListingStatus = pgEnum(
+  "JobListingStatus",
+  enumToPgEnum(JobListingStatusEnum)
+);
 
 export const userTable = pgTable(
   "User",
@@ -26,7 +105,11 @@ export const userTable = pgTable(
     password: varchar("password", { length: 256 }).notNull(),
     name: varchar("name", { length: 256 }).notNull(),
     imageUrl: varchar("imageUrl", { length: 256 }),
-    createdAt: timestamp("createdAt").defaultNow()
+    createdAt: timestamp("createdAt").defaultNow(),
+    updatedAt: timestamp("updatedAt")
+      .defaultNow()
+      .$onUpdate(() => new Date())
+      .notNull()
   },
   (table) => [
     index("name_idx").on(table.name),
@@ -34,25 +117,13 @@ export const userTable = pgTable(
   ]
 );
 
-export const userRelations = relations(userTable, ({ many }) => {
-  return {
-    favouritePortfolio: many(portfolioTable)
-  };
-});
-
 export const portfolioTable = pgTable("Portfolio", {
   id: uuid("id").primaryKey().defaultRandom(),
   name: varchar("name", { length: 256 }).notNull(),
   profileUrl: varchar("profileUrl", { length: 256 }).notNull(),
   performance: jsonb("performance").notNull(),
   sourceUrl: varchar("sourceUrl", { length: 256 }).notNull(),
-  sourcePlatform: SourcePlatform("sourcePlatform").notNull()
-});
-
-export const portfolioRelations = relations(portfolioTable, ({ many }) => {
-  return {
-    favouriteBy: many(userTable)
-  };
+  sourcePlatform: CryptoSourcePlatform("sourcePlatform").notNull()
 });
 
 export const positionTable = pgTable("Position", {
@@ -78,6 +149,122 @@ export const userFavouritePortfolioTable = pgTable(
   },
   (table) => [primaryKey({ columns: [table.userId, table.portfolioId] })]
 );
+
+export const schedulerTable = pgTable("Scheduler", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  name: varchar("name", { length: 256 }).notNull(),
+  description: varchar("description", { length: 256 }),
+  type: SchedulerType("type").notNull(),
+  frequency: SchedulerFrequency("frequency").notNull(),
+  frequencyExpression: varchar("frequencyExpression", {
+    length: 256
+  }).notNull(),
+  sourcePlatform: SourcePlatform("sourcePlatform").array().notNull(),
+  keywords: varchar("keywords", { length: 256 }).array(),
+  status: Status("status").default(StatusEnum.ACTIVE),
+  createdAt: timestamp("createdAt").defaultNow(),
+  updatedAt: timestamp("updatedAt")
+    .defaultNow()
+    .$onUpdate(() => new Date())
+    .notNull(),
+  userId: uuid("userId")
+    .references(() => userTable.id)
+    .notNull()
+});
+
+export const schedulerRecordTable = pgTable("SchedulerRecord", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  record: jsonb("record").$type<_SchedulerRecord>().notNull(),
+  lastTriggerAt: timestamp("lastTriggerAt").notNull(),
+  lastEndAt: timestamp("lastSuccessAt"),
+  schedulerId: uuid("schedulerId")
+    .references(() => schedulerTable.id)
+    .notNull()
+});
+
+// create a scheduler to clean up old data (1 week old data)
+// if next scrape found same sourceJobId -> override it / skip it
+// set outdated status for those job not found in next scrape
+export const jobTable = pgTable(
+  "Job",
+  {
+    // combine {table.schedulerId-table.sourceJobId}
+    id: varchar("id", { length: 256 }).primaryKey().notNull(),
+    sourceJobId: varchar("sourceJobId", { length: 256 }).notNull(),
+    sourceUrl: varchar("sourceUrl", { length: 256 }).notNull(),
+    title: varchar("title", { length: 256 }).notNull(),
+    companyName: varchar("companyName", { length: 256 }).notNull(),
+    companyImageUrl: varchar("companyImageUrl", { length: 256 }),
+    location: varchar("location", { length: 256 }).notNull(),
+    description: varchar("description", { length: 256 }),
+    position: varchar("position", { length: 256 }).notNull(),
+    detailsTemplate: text("detailsTemplate").notNull(),
+    jobListedAt: timestamp("jobListedAt").notNull(),
+    jobListingStatus: JobListingStatus("jobListingStatus")
+      .notNull()
+      .default(JobListingStatusEnum.VALID),
+    sourcePlatform: JobSourcePlatform("sourcePlatform").notNull(),
+    isFavourite: boolean("isFavourite").notNull().default(false),
+    createdAt: timestamp("createdAt").defaultNow(),
+    schedulerId: uuid("schedulerId")
+      .references(() => schedulerTable.id)
+      .notNull()
+  },
+  (table) => [
+    index("detailsTemplate_gin_idx").using(
+      "gin",
+      table.detailsTemplate.op("gin_trgm_ops")
+    )
+  ]
+);
+
+export const jobRelations = relations(jobTable, ({ one }) => {
+  return {
+    scheduler: one(schedulerTable, {
+      fields: [jobTable.schedulerId],
+      references: [schedulerTable.id]
+    })
+  };
+});
+
+export const userRelations = relations(userTable, ({ many }) => {
+  return {
+    favouritePortfolio: many(portfolioTable),
+    scheduler: many(schedulerTable)
+  };
+});
+
+export const schedulerRelations = relations(schedulerTable, ({ one, many }) => {
+  return {
+    user: one(userTable, {
+      fields: [schedulerTable.userId],
+      references: [userTable.id]
+    }),
+    jobs: many(jobTable),
+    record: one(schedulerRecordTable, {
+      fields: [schedulerTable.id],
+      references: [schedulerRecordTable.id]
+    })
+  };
+});
+
+export const schedulerRecordRelations = relations(
+  schedulerRecordTable,
+  ({ one }) => {
+    return {
+      belongToScheduler: one(schedulerTable, {
+        fields: [schedulerRecordTable.id],
+        references: [schedulerTable.id]
+      })
+    };
+  }
+);
+
+export const portfolioRelations = relations(portfolioTable, ({ many }) => {
+  return {
+    favouriteBy: many(userTable)
+  };
+});
 
 export const userFavouritePortfolioRelations = relations(
   userFavouritePortfolioTable,

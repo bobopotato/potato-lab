@@ -1,11 +1,6 @@
 import { InferSelectModel } from "drizzle-orm";
-import * as drizzleSchema from "@potato-lab/db";
-// import { createSelectSchema } from "drizzle-zod";
-// import { z } from "zod";
+import { userTable, portfolioTable, positionTable } from "@potato-lab/db";
 
-// export const userSelectSchema = createSelectSchema(drizzleSchema.userTable);
-
-// export type User = z.infer<typeof userSelectSchema>;
-export type User = InferSelectModel<typeof drizzleSchema.userTable>;
-export type Portfolio = InferSelectModel<typeof drizzleSchema.portfolioTable>;
-export type Position = InferSelectModel<typeof drizzleSchema.positionTable>;
+export type User = InferSelectModel<typeof userTable>;
+export type Portfolio = InferSelectModel<typeof portfolioTable>;
+export type Position = InferSelectModel<typeof positionTable>;
