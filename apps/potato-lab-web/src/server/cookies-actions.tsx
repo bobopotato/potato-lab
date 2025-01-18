@@ -31,6 +31,7 @@ export const setUserCookies = async (
   accessToken: string
 ) => {
   const cookieStore = cookies();
+  console.log({ userData, accessToken });
   cookieStore.set("user", JSON.stringify(userData), {
     expires: new Date(8640000000000000)
   });

@@ -3,11 +3,7 @@
 import React, { useContext, useEffect, useMemo, useState } from "react";
 import { User } from "@potato-lab/shared-types";
 import { useRouter } from "next/navigation";
-import {
-  getUserCookies,
-  clearUserCookies,
-  setUserCookies
-} from "../../server/cookies-actions";
+import { clearUserCookies, setUserCookies } from "../../server/cookies-actions";
 import { signIn as signInApi } from "../../utils/api.util";
 
 import { SignInReq } from "@potato-lab/shared-types";
@@ -15,9 +11,10 @@ import { toast } from "sonner";
 import { UseMutateFunction, useMutation } from "@tanstack/react-query";
 import { getErrorMessage } from "../../utils/error.util";
 
+type UserData = { user: Omit<User, "password">; accessToken: string };
+
 interface AuthContext {
-  error: string | null;
-  user: Omit<User, "password"> | null;
+  userData: UserData | undefined;
   isLoggedIn: boolean;
   signIn: UseMutateFunction<void, Error, SignInReq>;
   isLoadingSignIn: boolean;
@@ -30,75 +27,62 @@ const useAuth = () => {
   return useContext(AuthContext);
 };
 
-const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+const AuthProvider = ({
+  children,
+  userData
+}: {
+  children: React.ReactNode;
+  userData?: { user: Omit<User, "password">; accessToken: string };
+}) => {
   const router = useRouter();
-  const [user, setUser] = useState<Omit<User, "password"> | null>(null);
-
-  const isLoggedIn = useMemo(() => !!user?.id, [user]);
-
-  useEffect(() => {
-    if (!user) {
-      initUser();
-    }
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  const [_userData, setUserData] = useState<
+    { user: Omit<User, "password">; accessToken: string } | undefined
+  >(userData);
 
   useEffect(() => {
-    if (!user) {
+    // force logout
+    if (!_userData) {
       localStorage.removeItem("accessToken");
       router.refresh();
     }
-  }, [user, router]);
-
-  const initUser = async () => {
-    const result = await getUserCookies();
-
-    if (result.error || !result.data) {
-      setUser(null);
-      router.refresh();
-      return;
-    }
-
-    const { accessToken, user } = result.data;
-    localStorage.setItem("accessToken", accessToken);
-    localStorage.setItem("isLoggedIn", "true");
-    setUser(user);
-  };
+  }, [_userData, router]);
 
   const { isPending: isLoadingSignIn, mutate: signIn } = useMutation({
     mutationKey: ["sign-in"],
     mutationFn: async (data: SignInReq) => {
-      const { userData, accessToken } = await signInApi(data);
-      await setUserCookies(userData, accessToken);
+      const userData = await signInApi(data);
+      await setUserCookies(userData.userData, userData.accessToken);
+      setUserData({
+        user: userData.userData,
+        accessToken: userData.accessToken
+      });
+      localStorage.setItem("accessToken", userData?.accessToken);
+      localStorage.setItem("isLoggedIn", "true");
+      router.push("/");
     },
     onError: (error) => {
       toast.error(getErrorMessage(error, "Something went wrong"));
-    },
-    onSuccess: async () => {
-      await initUser();
-      router.push("/");
     }
   });
 
   const signOut = async () => {
     await clearUserCookies();
     localStorage.removeItem("isLoggedIn");
-    setUser(null);
+    setUserData(undefined);
   };
 
-  return (
-    <AuthContext.Provider
-      value={{
-        error: "aa",
-        user,
-        isLoggedIn,
-        signIn,
-        isLoadingSignIn,
-        signOut
-      }}
-    >
-      {children}
-    </AuthContext.Provider>
+  const value = useMemo(
+    () => ({
+      userData: _userData,
+      isLoggedIn: !!_userData?.user?.id,
+      isLoadingSignIn,
+      signIn,
+      signOut
+    }),
+    [_userData, signIn, isLoadingSignIn]
   );
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
 export default AuthProvider;

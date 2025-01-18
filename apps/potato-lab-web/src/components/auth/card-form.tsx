@@ -38,8 +38,8 @@ const CardForm = <T extends FieldValues>({
     onSubmit(values);
   };
   return (
-    <Loader isLoading={isLoading}>
-      <Card className="w-[35vw] bg-secondary">
+    <Card className="w-[35vw] bg-secondary">
+      <Loader isLoading={isLoading}>
         <CardHeader className="text-center">
           {previousPage && (
             <Link href={previousPage} className="w-fit">
@@ -60,8 +60,8 @@ const CardForm = <T extends FieldValues>({
             <CardFooter className="flex justify-between">{footer}</CardFooter>
           </form>
         </Form>
-      </Card>
-    </Loader>
+      </Loader>
+    </Card>
   );
 };
 

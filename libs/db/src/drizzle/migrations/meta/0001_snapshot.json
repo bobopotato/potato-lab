@@ -1,9 +1,137 @@
 {
-  "id": "5e5dccb1-f924-4ea0-abc3-3e1de7c8ea91",
-  "prevId": "5f5c4668-4271-49ba-808e-9051329c200f",
+  "id": "38026e74-7e0c-4ac3-8a04-af1a68519ae6",
+  "prevId": "d9b61c79-9f26-496b-b60a-6e947c4be38f",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
+    "public.Job": {
+      "name": "Job",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar(256)",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "sourceJobId": {
+          "name": "sourceJobId",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "sourceUrl": {
+          "name": "sourceUrl",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "title": {
+          "name": "title",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "companyName": {
+          "name": "companyName",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "companyImageUrl": {
+          "name": "companyImageUrl",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "location": {
+          "name": "location",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "name": "description",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "position": {
+          "name": "position",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "detailsTemplate": {
+          "name": "detailsTemplate",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "jobListedAt": {
+          "name": "jobListedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "jobListingStatus": {
+          "name": "jobListingStatus",
+          "type": "JobListingStatus",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'VALID'"
+        },
+        "sourcePlatform": {
+          "name": "sourcePlatform",
+          "type": "JobSourcePlatform",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "isFavourite": {
+          "name": "isFavourite",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "schedulerId": {
+          "name": "schedulerId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "Job_schedulerId_Scheduler_id_fk": {
+          "name": "Job_schedulerId_Scheduler_id_fk",
+          "tableFrom": "Job",
+          "tableTo": "Scheduler",
+          "columnsFrom": [
+            "schedulerId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
     "public.Portfolio": {
       "name": "Portfolio",
       "schema": "",
@@ -41,7 +169,7 @@
         },
         "sourcePlatform": {
           "name": "sourcePlatform",
-          "type": "SourcePlatform",
+          "type": "CryptoSourcePlatform",
           "typeSchema": "public",
           "primaryKey": false,
           "notNull": true
@@ -105,6 +233,170 @@
           "tableTo": "Portfolio",
           "columnsFrom": [
             "portfolioId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.SchedulerRecord": {
+      "name": "SchedulerRecord",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "record": {
+          "name": "record",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "lastTriggerAt": {
+          "name": "lastTriggerAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "lastSuccessAt": {
+          "name": "lastSuccessAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "schedulerId": {
+          "name": "schedulerId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "SchedulerRecord_schedulerId_Scheduler_id_fk": {
+          "name": "SchedulerRecord_schedulerId_Scheduler_id_fk",
+          "tableFrom": "SchedulerRecord",
+          "tableTo": "Scheduler",
+          "columnsFrom": [
+            "schedulerId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.Scheduler": {
+      "name": "Scheduler",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "name": "description",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "type": {
+          "name": "type",
+          "type": "SchedulerType",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "frequency": {
+          "name": "frequency",
+          "type": "SchedulerFrequency",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "frequencyExpression": {
+          "name": "frequencyExpression",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "sourcePlatform": {
+          "name": "sourcePlatform",
+          "type": "SourcePlatform[]",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "keywords": {
+          "name": "keywords",
+          "type": "varchar(256)[]",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "status": {
+          "name": "status",
+          "type": "Status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'ACTIVE'"
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "userId": {
+          "name": "userId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "Scheduler_userId_User_id_fk": {
+          "name": "Scheduler_userId_User_id_fk",
+          "tableFrom": "Scheduler",
+          "tableTo": "User",
+          "columnsFrom": [
+            "userId"
           ],
           "columnsTo": [
             "id"
@@ -220,6 +512,13 @@
           "primaryKey": false,
           "notNull": false,
           "default": "now()"
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
         }
       },
       "indexes": {
@@ -263,13 +562,65 @@
     }
   },
   "enums": {
+    "public.CryptoSourcePlatform": {
+      "name": "CryptoSourcePlatform",
+      "schema": "public",
+      "values": [
+        "BINANCE",
+        "BYBIT",
+        "MEDX"
+      ]
+    },
+    "public.JobListingStatus": {
+      "name": "JobListingStatus",
+      "schema": "public",
+      "values": [
+        "VALID",
+        "EXPIRED"
+      ]
+    },
+    "public.JobSourcePlatform": {
+      "name": "JobSourcePlatform",
+      "schema": "public",
+      "values": [
+        "JOBSTREET",
+        "INDEED"
+      ]
+    },
+    "public.SchedulerFrequency": {
+      "name": "SchedulerFrequency",
+      "schema": "public",
+      "values": [
+        "HOURLY",
+        "DAILY",
+        "CUSTOM"
+      ]
+    },
+    "public.SchedulerType": {
+      "name": "SchedulerType",
+      "schema": "public",
+      "values": [
+        "JOBS_SCRAPPER",
+        "CRYPTO_SCRAPPER"
+      ]
+    },
     "public.SourcePlatform": {
       "name": "SourcePlatform",
       "schema": "public",
       "values": [
         "BINANCE",
         "BYBIT",
-        "MEDX"
+        "MEDX",
+        "JOBSTREET",
+        "INDEED"
+      ]
+    },
+    "public.Status": {
+      "name": "Status",
+      "schema": "public",
+      "values": [
+        "ACTIVE",
+        "INACTIVE"
       ]
     }
   },

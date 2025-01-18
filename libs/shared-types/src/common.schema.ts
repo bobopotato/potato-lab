@@ -1,4 +1,25 @@
-import { z } from "zod";
+import { z, ZodType } from "zod";
+
+export const booleanSchema = z
+  .union([z.boolean(), z.literal("true"), z.literal("false")])
+  .transform((value) => {
+    if (value === "true") {
+      return true;
+    }
+
+    if (value === "false") {
+      return false;
+    }
+
+    return !!value;
+  });
+
+export const paginationResponseSchema = z.object({
+  page: z.number(),
+  pageSize: z.number(),
+  total: z.number(),
+  totalPage: z.number()
+});
 
 const MAX_FILE_SIZE = 1000000;
 
@@ -50,4 +71,22 @@ export const getImageSchema = (isOptional = false) => {
     });
     return z.NEVER;
   });
+};
+
+export const uniqueArray = (schema: ZodType, isOptional = false) => {
+  if (isOptional) {
+    return z
+      .array(schema)
+      .optional()
+      .refine((items) => new Set(items).size === items?.length, {
+        message: "All items must be unique, no duplicate values allowed"
+      });
+  }
+
+  return z
+    .array(schema)
+    .nonempty()
+    .refine((items) => new Set(items).size === items.length, {
+      message: "All items must be unique, no duplicate values allowed"
+    });
 };

@@ -49,3 +49,5 @@ vite.config.*.timestamp*
 .env*
 
 .serverless*
+
+apps/potato-lab-server/undefined

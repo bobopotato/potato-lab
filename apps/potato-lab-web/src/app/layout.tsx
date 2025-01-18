@@ -5,6 +5,7 @@ import { cn } from "@potato-lab/lib/utils";
 import { iosevkaMono } from "../fonts/Iosevka";
 import RootProviders from "./providers";
 import GlobalDialog from "../components/dialog/GlobalDialog";
+import { getUserCookies } from "../server/cookies-actions";
 
 export const metadata: Metadata = {
   title: "Welcome to potato-lab-web",
@@ -16,6 +17,17 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const getUserData = async () => {
+    const result = await getUserCookies();
+
+    if (result.error || !result.data) {
+      return;
+    }
+
+    return result.data;
+  };
+  const userData = await getUserData();
+
   return (
     <html lang="en" suppressHydrationWarning>
       <body
@@ -24,7 +36,7 @@ export default async function RootLayout({
           iosevkaMono.variable
         )}
       >
-        <RootProviders>{children}</RootProviders>
+        <RootProviders userData={userData}>{children}</RootProviders>
         <GlobalDialog />
       </body>
     </html>

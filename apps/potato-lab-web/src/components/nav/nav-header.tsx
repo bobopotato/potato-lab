@@ -10,17 +10,29 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuTrigger
+  DropdownMenuTrigger,
+  useSidebar
 } from "@potato-lab/ui";
 import { ThemeSwitcher } from "../theme/theme-switcher";
 import { useAuth } from "../auth/auth-provider";
+import { Menu } from "lucide-react";
 
 export const NavHeader = ({ title }: { title: string }) => {
-  const { isLoggedIn, signOut, user } = useAuth();
+  const { setOpenMobile } = useSidebar();
+  const { isLoggedIn, signOut, userData } = useAuth();
 
   return (
     <header className="w-full h-[--header-height] bg-secondary px-8 py-8 flex items-center justify-between shadow-lg dark:shadow-sm dark:shadow-gray-800 sticky top-0 z-20">
-      <h1 className="text-2xl text-primary">{title}</h1>
+      <div className="flex items-center gap-4">
+        <Button
+          variant="outline"
+          className="md:hidden"
+          onClick={() => setOpenMobile(true)}
+        >
+          <Menu className="aspect-square" />
+        </Button>
+        <h1 className="text-2xl text-primary">{title}</h1>
+      </div>
       <div className="flex items-center gap-4">
         <ThemeSwitcher />
         {isLoggedIn && (
@@ -30,8 +42,8 @@ export const NavHeader = ({ title }: { title: string }) => {
                 <Avatar className="h-9 w-9 cursor-pointer">
                   <AvatarImage
                     src={
-                      user?.imageUrl
-                        ? user.imageUrl
+                      userData?.user?.imageUrl
+                        ? userData?.user?.imageUrl
                         : "https://github.com/shadcn.png"
                     }
                   />

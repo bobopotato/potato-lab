@@ -1,6 +1,7 @@
 import React from "react";
 import { Slottable } from "@radix-ui/react-slot";
 import { Loader2 } from "lucide-react";
+import { cn } from "@potato-lab/lib/utils";
 
 interface LoaderProps {
   children: React.ReactNode;
@@ -13,10 +14,11 @@ export const Loader = ({
   children,
   isLoading,
   loadingComponent,
-  label = "Loading"
-}: LoaderProps) => {
+  label = "Loading",
+  className
+}: LoaderProps & React.HTMLAttributes<HTMLDivElement>) => {
   return (
-    <div className="relative h-auto w-auto">
+    <div className={cn("relative h-full w-full", className)}>
       <Slottable>{children}</Slottable>
       {isLoading && (
         <div className="absolute top-0 left-0 w-full h-full bg-black/40 flex flex-col gap-3 items-center justify-center">

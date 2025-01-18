@@ -5,13 +5,28 @@ import { SidebarProvider, Toaster } from "@potato-lab/ui";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import AuthProvider from "../components/auth/auth-provider";
+import { User } from "@potato-lab/shared-types";
 
-const RootProviders = ({ children }: { children: React.ReactNode }) => {
-  const queryClient = new QueryClient();
+const RootProviders = ({
+  children,
+  userData
+}: {
+  children: React.ReactNode;
+  userData?: { user: Omit<User, "password">; accessToken: string };
+}) => {
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        // With SSR, we usually want to set some default staleTime
+        // above 0 to avoid refetching immediately on the client
+        staleTime: 60 * 1000
+      }
+    }
+  });
 
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
+      <AuthProvider userData={userData}>
         <ThemeProvider attribute="class" defaultTheme="light">
           <SidebarProvider
             style={

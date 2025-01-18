@@ -11,17 +11,17 @@
       "options": {
         "cwd": "apps/potato-lab-server",
         "color": true,
-        "command": "sls offline start"
+        "command": "nodemon --exec sls offline start"
       },
       "configurations": {
         "development": {
-          "command": "sls offline start"
+          "command": "nodemon --exec sls offline start"
         },
         "staging": {
-          "command": "sls offline start --stage staging"
+          "command": "nodemon --exec sls offline start --stage staging"
         },
         "production": {
-          "command": "sls offline start --stage production"
+          "command": "nodemon --exec sls offline start --stage production"
         }
       }
     },
