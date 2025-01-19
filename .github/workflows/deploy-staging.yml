@@ -17,6 +17,8 @@ jobs:
       ACCESS_TOKEN_SECRET: ${{ secrets.ACCESS_TOKEN_SECRET }}
       REFRESH_TOKEN_SECRET: ${{ secrets.REFRESH_TOKEN_SECRET }}
     steps:
+      - run: |
+          echo "Deploying to Staging Environment with database URL: $DATABASE_URL"
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
