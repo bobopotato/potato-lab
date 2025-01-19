@@ -37,7 +37,7 @@ jobs:
 
       - name: Deploy
         run: |
-          echo "Deploying to Staging Environment" 
-          npx nx affected -t deploy --base=origin/main~1 --head=origin/main
+          echo "Deploying to Production Environment" 
+          npx nx affected -t deploy -c production --base=origin/main~1 --head=origin/main
         env:
           SERVERLESS_ACCESS_KEY: ${{ vars.SERVERLESS_ACCESS_KEY }}
