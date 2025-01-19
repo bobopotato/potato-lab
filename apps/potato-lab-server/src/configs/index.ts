@@ -17,7 +17,7 @@ export const baseConfig = {
   awsJobScrapperProcessQueueName:
     process.env.AWS_SQS_JOB_SCRAPPER_PROCESS_QUEUE_NAME ?? "",
 
-  awsRegion: process.env.AWS_REGION ?? "",
+  awsRegion: process.env.AWS_SG_REGION ?? "",
 
   awsScrapperLambdaArn: process.env.AWS_SCRAPPER_LAMBDA_ARN ?? "",
   awsScrapperLambdaName: process.env.AWS_SCRAPPER_LAMBDA_NAME ?? "",
