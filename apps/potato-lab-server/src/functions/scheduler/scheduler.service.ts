@@ -11,7 +11,8 @@ import {
   AddPermissionCommand,
   LambdaClient,
   RemovePermissionCommand,
-  RemovePermissionCommandInput
+  RemovePermissionCommandInput,
+  ResourceConflictException
 } from "@aws-sdk/client-lambda";
 import { baseConfig } from "../../configs";
 
@@ -117,7 +118,15 @@ export const createUpdateAwsScheduler = async (
     Principal: "events.amazonaws.com",
     SourceArn: `${baseConfig.awsRuleArn}/${uniqueName}`
   };
-  await lambdaClient.send(new AddPermissionCommand(permissionParams));
+  try {
+    await lambdaClient.send(new AddPermissionCommand(permissionParams));
+  } catch (err) {
+    if (err instanceof ResourceConflictException) {
+      console.log("Permission already exists. Skipping...");
+      return;
+    }
+    throw err;
+  }
 };
 
 export const deleteAwsScheduler = async (id: string) => {

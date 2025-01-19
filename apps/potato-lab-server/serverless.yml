@@ -16,6 +16,8 @@ provider:
             - s3:*
             - sqs:*
             - events:*
+            - lambda:AddPermission
+            - lambda:RemovePermission
 
 functions:
   authApi:
