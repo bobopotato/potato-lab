@@ -2,8 +2,8 @@ import "dotenv/config";
 import { CookieOptions } from "express";
 
 export const baseConfig = {
-  isProduction: process.env.NODE_ENV === "production",
-  isStaging: process.env.NODE_ENV === "staging",
+  isProduction: process.env.STAGE === "production",
+  isStaging: process.env.STAGE === "staging",
 
   accessTokenSecret: process.env.ACCESS_TOKEN_SECRET ?? "",
   refreshTokenSecret: process.env.REFRESH_TOKEN_SECRET ?? "",

@@ -8,7 +8,7 @@ provider:
   timeout: 25 # optional, in seconds, default is 6
   iam:
     role:
-      name: serverless-my-super-role-${env:NODE_ENV}
+      name: serverless-my-super-role-${env:STAGE}
       statements:
         - Effect: Allow
           Resource: "*"
