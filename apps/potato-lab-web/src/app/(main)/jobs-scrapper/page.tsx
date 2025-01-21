@@ -95,9 +95,17 @@ const ScrapperCard = ({ data }: { data: SelectScheduler }) => {
         </CardContent>
         <CardFooter className="flex flex-col items-end gap-2 text-sm text-gray-500">
           <p>Last triggered at:</p>
-          <p className="text-xs">{formatDateTime(data.lastTriggerAt) || "-"}</p>
+          <p className="text-xs">
+            {data.records?.[0]?.lastTriggerAt
+              ? formatDateTime(data.records[0].lastTriggerAt)
+              : "-"}
+          </p>
           <p>Last success at</p>
-          <p className="text-xs">{formatDateTime(data.lastEndAt) || "-"}</p>
+          <p className="text-xs">
+            {data.records?.[0]?.lastEndAt
+              ? formatDateTime(data.records[0].lastEndAt)
+              : "-"}
+          </p>
         </CardFooter>
       </Card>
     </Link>
