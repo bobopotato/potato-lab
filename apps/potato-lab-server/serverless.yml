@@ -56,11 +56,15 @@ functions:
   jobScrapperAnalyzeReceiver:
     handler: ./src/index.jobScrapperAnalyzeReceiver
     events:
-      - sqs: arn:aws:sqs:ap-southeast-1:767397903484:jobScrapperAnalyzeQueue
+      - sqs:
+          arn: arn:aws:sqs:ap-southeast-1:767397903484:jobScrapperAnalyzeQueue
+          batchSize: 10
   jobScrapperProcessReceiver:
     handler: ./src/index.jobScrapperProcessReceiver
     events:
-      - sqs: arn:aws:sqs:ap-southeast-1:767397903484:jobScrapperProcessQueue
+      - sqs:
+          arn: arn:aws:sqs:ap-southeast-1:767397903484:jobScrapperProcessQueue
+          batchSize: 10
 
 custom:
   dotenv:
@@ -73,6 +77,7 @@ custom:
     endpoint: http://0.0.0.0:9324
     region: ap-southeast-1
     skipCacheInvalidation: false
+    batchSize: 10
 
 plugins:
   - serverless-offline-sqs

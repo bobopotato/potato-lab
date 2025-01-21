@@ -11,7 +11,7 @@ import {
 import { FieldValues, UseFormReturn } from "react-hook-form";
 import { ArrowLeftCircleIcon } from "lucide-react";
 import Link from "next/link";
-import { Loader } from "@potato-lab/ui";
+import { LoadingWrapper } from "@potato-lab/ui";
 
 interface CardFormProps<T extends FieldValues> {
   title: string;
@@ -39,7 +39,7 @@ const CardForm = <T extends FieldValues>({
   };
   return (
     <Card className="w-[35vw] bg-secondary">
-      <Loader isLoading={isLoading}>
+      <LoadingWrapper isLoading={isLoading}>
         <CardHeader className="text-center">
           {previousPage && (
             <Link href={previousPage} className="w-fit">
@@ -60,7 +60,7 @@ const CardForm = <T extends FieldValues>({
             <CardFooter className="flex justify-between">{footer}</CardFooter>
           </form>
         </Form>
-      </Loader>
+      </LoadingWrapper>
     </Card>
   );
 };

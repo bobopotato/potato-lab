@@ -14,7 +14,9 @@ export async function middleware(request: NextRequest) {
   const _isPublicRoute = isPublicRoute(request.nextUrl.pathname);
 
   if (_isPublicRoute && data?.user) {
-    return NextResponse.redirect(new URL("/dashboard", request.url));
+    return NextResponse.redirect(
+      new URL("/dashboard/introduction", request.url)
+    );
   }
 
   if (!_isPublicRoute && !data?.user) {

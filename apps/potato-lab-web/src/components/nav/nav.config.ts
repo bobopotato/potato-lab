@@ -4,7 +4,8 @@ import {
   LucideProps,
   NewspaperIcon,
   SearchIcon,
-  ShovelIcon
+  ShovelIcon,
+  ViewIcon
 } from "lucide-react";
 import React from "react";
 
@@ -21,37 +22,55 @@ export interface NavigationItem {
 export const navigationItems: NavigationItem[] = [
   {
     title: "Dashboard",
-    url: "/dashboard",
-    icon: LayoutDashboardIcon
-  },
-  {
-    title: "Scrapper",
     url: "#",
-    icon: ShovelIcon,
+    icon: LayoutDashboardIcon,
     children: [
       {
-        title: "Jobs Scrapper",
-        url: "/scrapper/jobs-scrapper"
+        title: "Introduction",
+        url: "/dashboard/introduction"
+      },
+      {
+        title: "Overview",
+        url: "/dashboard/overview"
       }
-      // {
-      //   title: "Coming Soon",
-      //   url: "/scrapper/coming-soon"
-      // }
     ]
   },
+  // {
+  //   title: "Scrapper",
+  //   url: "#",
+  //   icon: ShovelIcon,
+  //   children: [
   {
-    title: "Search",
-    url: "/search",
-    icon: SearchIcon
+    title: "Jobs Scrapper",
+    url: "/jobs-scrapper",
+    icon: ShovelIcon
+    // children: []
   },
+  {
+    title: "Jobs Scrapper Data",
+    url: "/jobs-scrapper-data",
+    icon: ViewIcon,
+    children: []
+  },
+  // {
+  //   title: "Coming Soon",
+  //   url: "/scrapper/coming-soon"
+  // }
+  //   ]
+  // },
+  // {
+  //   title: "Search",
+  //   url: "/search",
+  //   icon: SearchIcon
+  // },
   {
     title: "Favourite",
     url: "/favourite",
     icon: FolderHeartIcon
-  },
-  {
-    title: "News",
-    url: "/news",
-    icon: NewspaperIcon
   }
+  // {
+  //   title: "News",
+  //   url: "/news",
+  //   icon: NewspaperIcon
+  // }
 ];

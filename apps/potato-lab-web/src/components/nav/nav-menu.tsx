@@ -24,6 +24,13 @@ import { DropdownMenuArrow } from "@radix-ui/react-dropdown-menu";
 import { CollapsibleContent } from "@radix-ui/react-collapsible";
 import { useJobsScrapperQuery } from "../../queries/use-jobs-scrapper-query";
 
+const isCurrentPath = (pathname: string, path: string) => {
+  return (
+    (pathname.split("/").length < 4 && pathname.startsWith(path)) ||
+    (pathname.split("/").length >= 4 && pathname === path)
+  );
+};
+
 const NavMenu = () => {
   const pathname = usePathname();
   const { open } = useSidebar();
@@ -33,31 +40,49 @@ const NavMenu = () => {
 
   const _navigationItems = useMemo(() => {
     if (!jobsScrapperData?.length) {
-      return navigationItems;
+      if (isJobsScrapperPending) {
+        return navigationItems;
+      }
+      return navigationItems.filter((item) => {
+        return item.title !== "Jobs Scrapper Data";
+      });
     }
 
     const clonedNavigationItem = cloneDeep(navigationItems);
-    const scrapperNav = clonedNavigationItem.find(
-      (item) => item.title === "Scrapper"
+    const viewScrapperDataNav = clonedNavigationItem.find(
+      (item) => item.title === "Jobs Scrapper Data"
     );
 
-    if (!scrapperNav || !scrapperNav.children?.length) {
+    if (!viewScrapperDataNav || !viewScrapperDataNav.children) {
       return clonedNavigationItem;
     }
 
-    scrapperNav.children.push(
+    viewScrapperDataNav.children.push(
       ...jobsScrapperData.map((item) => ({
         title: item.name,
-        url: `/scrapper/jobs-scrapper/${item.id}/listing`
+        url: `/jobs-scrapper-data/${item.id}/listing`
       }))
     );
     return clonedNavigationItem;
-  }, [jobsScrapperData]);
+  }, [isJobsScrapperPending, jobsScrapperData]);
 
   return (
     <ScrollArea>
       <SidebarMenu className="py-2">
         {_navigationItems.map((item) => {
+          if (isJobsScrapperPending && item.title === "Jobs Scrapper Data") {
+            return (
+              <div className="flex gap-2 scale-75 py-3.5" key={item.title}>
+                <Loader2 className="animate-spin" />
+                <div className="flex gap-2 items-baseline">
+                  <span className="animate-pulse">Loading scrapper data</span>
+                  <div className="h-1 w-1 rounded-full bg-current animate-pulse delay-200"></div>
+                  <div className="h-1 w-1 rounded-full bg-current animate-pulse delay-400"></div>
+                  <div className="h-1 w-1 rounded-full bg-current animate-pulse delay-200"></div>
+                </div>
+              </div>
+            );
+          }
           if (!item.children?.length) {
             return (
               <NormalMenu key={item.title} item={item} pathname={pathname} />
@@ -90,7 +115,7 @@ const NormalMenu = ({
       <SidebarMenuButton
         className={cn(
           "w-full transition-all duration-100 ease-in-out dark:hover:bg-primary-foreground hover:bg-gray-200",
-          pathname.startsWith(item.url)
+          isCurrentPath(pathname, item.url)
             ? "dark:bg-primary-foreground bg-gray-200 font-semibold"
             : ""
         )}
@@ -117,26 +142,26 @@ const CollapsibleMenu = ({
   pathname: string;
   isJobsScrapperPending: boolean;
 }) => {
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(true);
 
-  useEffect(() => {
-    const checkChildren = (items: NavigationItem[]) => {
-      for (const child of items) {
-        if (child.children?.length) {
-          checkChildren(child.children);
-          continue;
-        }
-        if (pathname.startsWith(child.url)) {
-          setIsCollapsed(true);
-          return;
-        }
-      }
-    };
+  // useEffect(() => {
+  //   const checkChildren = (items: NavigationItem[]) => {
+  //     for (const child of items) {
+  //       if (child.children?.length) {
+  //         checkChildren(child.children);
+  //         continue;
+  //       }
+  //       if (pathname.startsWith(child.url)) {
+  //         setIsCollapsed(true);
+  //         return;
+  //       }
+  //     }
+  //   };
 
-    if (item.children?.length) {
-      checkChildren(item.children);
-    }
-  }, [item.children, pathname]);
+  //   if (item.children?.length) {
+  //     checkChildren(item.children);
+  //   }
+  // }, [item.children, pathname]);
 
   const button = (
     item: NavigationItem | NonNullable<NavigationItem["children"]>[number],
@@ -147,9 +172,7 @@ const CollapsibleMenu = ({
         className={cn(
           "mb-1 w-full transition-all duration-100 ease-in-out dark:hover:bg-primary-foreground hover:bg-gray-200",
           (!item.children?.length || !isCollapsed) &&
-            ((pathname.split("/").length < 5 &&
-              pathname.startsWith(item.url)) ||
-              (pathname.split("/").length >= 5 && pathname === item.url))
+            isCurrentPath(pathname, item.url)
             ? "dark:bg-primary-foreground bg-gray-200 font-semibold"
             : ""
         )}
@@ -225,17 +248,6 @@ const CollapsibleMenu = ({
           {item.children?.map((child, index) => {
             return <div key={index}>{button(child)}</div>;
           })}
-          {isJobsScrapperPending && (
-            <div className="flex gap-2 scale-75">
-              <Loader2 className="animate-spin" />
-              <div className="flex gap-2 items-baseline">
-                <span className="animate-pulse">Loading more data</span>
-                <div className="h-1 w-1 rounded-full bg-current animate-pulse delay-200"></div>
-                <div className="h-1 w-1 rounded-full bg-current animate-pulse delay-400"></div>
-                <div className="h-1 w-1 rounded-full bg-current animate-pulse delay-200"></div>
-              </div>
-            </div>
-          )}
         </CollapsibleContent>
       </SidebarMenuItem>
     </Collapsible>

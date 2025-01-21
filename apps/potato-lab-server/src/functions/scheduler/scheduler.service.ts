@@ -1,7 +1,7 @@
 import { InsertScheduler, UpdateScheduler } from "@potato-lab/shared-types";
 import { db } from "../../db";
 import { schedulerRecordTable, schedulerTable } from "@potato-lab/db";
-import { eq, getTableColumns } from "drizzle-orm";
+import { desc, eq, getTableColumns, sql } from "drizzle-orm";
 import {
   EventBridge,
   PutRuleCommandInput,
@@ -43,19 +43,26 @@ export const updateScheduler = async (
 };
 
 export const getUserScheduler = async (userId: string) => {
+  const subQuery = db
+    .select({
+      schedulerId: schedulerRecordTable.schedulerId,
+      records:
+        sql`json_agg(${schedulerRecordTable} order by ${schedulerRecordTable.id} desc)`.as(
+          "records"
+        )
+    })
+    .from(schedulerRecordTable)
+    .groupBy(schedulerRecordTable.schedulerId)
+    .as("subQuery");
+
   const data = await db
     .select({
       ...getTableColumns(schedulerTable),
-      record: schedulerRecordTable.record,
-      lastTriggerAt: schedulerRecordTable.lastTriggerAt,
-      lastEndAt: schedulerRecordTable.lastEndAt
+      records: subQuery.records
     })
     .from(schedulerTable)
-    .leftJoin(
-      schedulerRecordTable,
-      eq(schedulerTable.id, schedulerRecordTable.schedulerId)
-    )
-    .where(eq(schedulerTable.userId, userId));
+    .where(eq(schedulerTable.userId, userId))
+    .leftJoin(subQuery, eq(schedulerTable.id, subQuery.schedulerId));
 
   return data;
 };

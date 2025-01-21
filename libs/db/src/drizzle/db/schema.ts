@@ -241,10 +241,7 @@ export const schedulerRelations = relations(schedulerTable, ({ one, many }) => {
       references: [userTable.id]
     }),
     jobs: many(jobTable),
-    record: one(schedulerRecordTable, {
-      fields: [schedulerTable.id],
-      references: [schedulerRecordTable.id]
-    })
+    record: many(schedulerRecordTable)
   };
 });
 
