@@ -9,7 +9,9 @@ const withBundleAnalyzer = require("@next/bundle-analyzer");
  **/
 const nextConfig = {
   async redirects() {
-    return [{ source: "/", destination: "/dashboard", permanent: true }]; // Set to true for permanent redirect (308) or false for temporary redirect (307) },
+    return [
+      { source: "/", destination: "/dashboard/introduction", permanent: true }
+    ]; // Set to true for permanent redirect (308) or false for temporary redirect (307) },
   },
   images: {
     domains: ["image-service-cdn.seek.com.au"]

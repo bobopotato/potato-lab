@@ -23,7 +23,8 @@ export const processSchema = z.object({
   id: z.string(),
   keyword: z.string(),
   jobIds: z.array(z.string()).nonempty(),
-  sourcePlatform: z.nativeEnum(JobSourcePlatformEnum)
+  sourcePlatform: z.nativeEnum(JobSourcePlatformEnum),
+  schedulerRecordId: z.string()
 });
 
 export const jobStreetAnalyze = async (data: z.infer<typeof analyzeSchema>) => {
@@ -61,6 +62,18 @@ export const jobStreetAnalyze = async (data: z.infer<typeof analyzeSchema>) => {
 
   await Promise.all(getDataPromises);
 
+  const schedulerRecord = await insertOrUpdateSchedulerRecordData({
+    record: {
+      [keyword]: {
+        totalCount: totalJobsCount,
+        currentCount: 0,
+        failedCount: 0
+      }
+    },
+    lastTriggerAt: new Date(),
+    schedulerId: id
+  });
+
   const sqs = new SQS({
     region: "ap-southeast-1"
   });
@@ -74,22 +87,11 @@ export const jobStreetAnalyze = async (data: z.infer<typeof analyzeSchema>) => {
       MessageBody: JSON.stringify({
         id,
         keyword,
-        jobIds,
-        sourcePlatform
-      } as z.infer<typeof processSchema>)
+        jobIds: jobIds as z.infer<typeof processSchema.shape.jobIds>,
+        sourcePlatform,
+        schedulerRecordId: schedulerRecord.id
+      } satisfies z.infer<typeof processSchema>)
     });
-  });
-
-  const insertRecordPromises = insertOrUpdateSchedulerRecordData({
-    record: {
-      [keyword]: {
-        totalCount: totalJobsCount,
-        currentCount: 0,
-        failedCount: 0
-      }
-    },
-    lastTriggerAt: new Date(),
-    schedulerId: id
   });
 
   console.info("Sending Message Promises and insert Schduler Record Data", {
@@ -97,18 +99,21 @@ export const jobStreetAnalyze = async (data: z.infer<typeof analyzeSchema>) => {
     keyword,
     jobIds
   });
-  const promises = [...sendMessagePromises, insertRecordPromises];
-  await Promise.all(promises);
 
+  await Promise.all(sendMessagePromises);
   console.info("Job Street Analyze - Completed", { id, keyword });
-  //   res.ok();
 };
 
 export const jobStreetProcess = async (data: z.infer<typeof processSchema>) => {
-  const { id, keyword, jobIds } = data;
+  const { id, keyword, jobIds, schedulerRecordId } = data;
 
   // get details
-  console.info("Getting job details", { id, keyword, jobIds });
+  console.info("Getting job details", {
+    id,
+    schedulerRecordId,
+    keyword,
+    jobIds
+  });
 
   const promises = jobIds.map((jobId) => async () => {
     return await getJobStreetDetails(jobId, id);
@@ -144,7 +149,7 @@ export const jobStreetProcess = async (data: z.infer<typeof processSchema>) => {
   // update recordTable
   console.info("Updating sechdulerRecordCount", { id, keyword, jobIds });
   await updateSchedulerRecordCount(
-    id,
+    schedulerRecordId,
     keyword,
     successDetails.length,
     failedDetails.length

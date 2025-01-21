@@ -23,7 +23,7 @@ import {
   FormLabel,
   FormMessage,
   Input,
-  Loader,
+  LoadingWrapper,
   Select,
   SelectContent,
   SelectGroup,
@@ -154,7 +154,7 @@ const SchedulerConfiguration = ({
   };
 
   return (
-    <Loader isLoading={isPending}>
+    <LoadingWrapper isLoading={isPending}>
       <div className="w-full flex flex-row gap-10 justify-evenly items-start">
         <Form {...form}>
           <form
@@ -438,11 +438,15 @@ const SchedulerConfiguration = ({
                 <>
                   <p>
                     Last triggered at:{" "}
-                    {formatDateTime(defaultData.lastTriggerAt) || "-"}
+                    {defaultData.records?.[0]?.lastTriggerAt
+                      ? formatDateTime(defaultData.records[0].lastTriggerAt)
+                      : "-"}
                   </p>
                   <p>
                     Last ended at:{" "}
-                    {formatDateTime(defaultData.lastTriggerAt) || "-"}
+                    {defaultData.records?.[0]?.lastEndAt
+                      ? formatDateTime(defaultData.records[0].lastEndAt)
+                      : "-"}
                   </p>
                   <div className="pt-5 flex flex-wrap justify-evenly gap-2">
                     <Button
@@ -463,7 +467,7 @@ const SchedulerConfiguration = ({
           </Card>
         }
       </div>
-    </Loader>
+    </LoadingWrapper>
   );
 };
 

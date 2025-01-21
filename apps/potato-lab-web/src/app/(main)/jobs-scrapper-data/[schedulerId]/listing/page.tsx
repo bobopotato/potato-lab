@@ -5,24 +5,17 @@ import {
   Card,
   CardContent,
   Input,
-  Loader,
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
+  LoadingWrapper,
   PaginationWithLinks,
   ScrollArea
 } from "@potato-lab/ui";
-import React, { LegacyRef, useEffect, useMemo } from "react";
+import React, { useEffect } from "react";
 import { toast } from "sonner";
-import { useJobsQuery } from "../../../../../../queries/use-jobs-query";
-import { getErrorMessage } from "../../../../../../utils/error.util";
+import { useJobsQuery } from "../../../../../queries/use-jobs-query";
+import { getErrorMessage } from "../../../../../utils/error.util";
 import Image from "next/image";
 import { Job } from "@potato-lab/shared-types";
-import { formatDateTime } from "../../../../../../utils/date.util";
+import { formatDateTime } from "../../../../../utils/date.util";
 import { debounce } from "lodash";
 import { cn } from "@potato-lab/lib/utils";
 import Link from "next/link";
@@ -99,7 +92,7 @@ const JobListing = ({ params }: { params: { schedulerId: string } }) => {
   }
 
   return (
-    <Loader isLoading={isLoading}>
+    <LoadingWrapper isLoading={isLoading}>
       <div>
         <div className="flex flex-row gap-4  w-full max-w-[100%]">
           <div className="w-[40%] max-w-[40%]">
@@ -160,7 +153,7 @@ const JobListing = ({ params }: { params: { schedulerId: string } }) => {
           </div>
         )}
       </div>
-    </Loader>
+    </LoadingWrapper>
   );
 };
 

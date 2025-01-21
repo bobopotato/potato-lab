@@ -19,10 +19,12 @@ export const getJobStreetData = async (keyword: string, page: number) => {
   }
 
   const totalJobsCountRegex =
-    /<span data-automation="totalJobsCount">(\d+)<\/span> jobs/;
+    /<span data-automation="totalJobsCount">\s*(.*?)\s*<\/span> jobs/;
   const jobIdRegex = /data-job-id="(\d+)"/g;
 
-  const totalJobsCount = Number(data.match(totalJobsCountRegex)[1]);
+  const totalJobsCount = Number(
+    data.match(totalJobsCountRegex)[1].replaceAll(",", "")
+  );
   const jobIds = [...data.matchAll(jobIdRegex)].map((match) =>
     String(match[1])
   );
