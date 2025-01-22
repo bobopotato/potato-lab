@@ -2,10 +2,10 @@
 
 import React, { useMemo } from "react";
 import { SchedulerTypeEnum } from "@potato-lab/db";
-import SchedulerConfiguration from "../../../../../components/scrapper/scheduler-configuration";
-import { useJobsScrapperQuery } from "../../../../../queries/use-jobs-scrapper-query";
+import SchedulerConfiguration from "../../../../components/scrapper/scheduler-configuration";
+import { useJobsScrapperQuery } from "../../../../queries/use-jobs-scrapper-query";
 import { selectSchedulerSchema } from "@potato-lab/shared-types";
-import { Loader } from "@potato-lab/ui";
+import { LoadingWrapper } from "@potato-lab/ui";
 
 const ScrapperScheduler = ({ params }: { params: { schedulerId: string } }) => {
   const { data, isPending } = useJobsScrapperQuery();
@@ -20,7 +20,7 @@ const ScrapperScheduler = ({ params }: { params: { schedulerId: string } }) => {
   }, [data, params.schedulerId]);
 
   return (
-    <Loader isLoading={isPending}>
+    <LoadingWrapper isLoading={isPending}>
       <h1 className="text-2xl">Setup Your Job Scrapper Configuration</h1>
       {selectedData && (
         <SchedulerConfiguration
@@ -29,7 +29,7 @@ const ScrapperScheduler = ({ params }: { params: { schedulerId: string } }) => {
           defaultData={selectedData}
         />
       )}
-    </Loader>
+    </LoadingWrapper>
   );
 };
 

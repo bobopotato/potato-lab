@@ -1,6 +1,10 @@
 import { merge } from "lodash";
 import { eq } from "drizzle-orm";
-import { InsertJob, InsertSchedulerRecord } from "@potato-lab/shared-types";
+import {
+  InsertJob,
+  InsertSchedulerRecord,
+  UpdateSchedulerRecord
+} from "@potato-lab/shared-types";
 import {
   conflictUpdateAllExcept,
   jobTable,
@@ -24,30 +28,43 @@ export const insertJobData = async (data: InsertJob[]) => {
     .values(data)
     .onConflictDoUpdate({
       target: jobTable.id,
-      set: conflictUpdateAllExcept(jobTable, ["id", "isFavourite"])
+      set: conflictUpdateAllExcept(jobTable, [
+        "id",
+        "isFavourite",
+        "schedulerId"
+      ])
     });
 };
 
-export const insertOrUpdateSchedulerRecordData = async (
+export const insertSchedulerRecordData = async (
   data: InsertSchedulerRecord
+) => {
+  const [result] = await db
+    .insert(schedulerRecordTable)
+    .values(data)
+    .returning();
+  return result;
+};
+
+export const updateSchedulerRecordData = async (
+  data: Partial<UpdateSchedulerRecord> &
+    Required<Pick<UpdateSchedulerRecord, "id">>
 ) => {
   await db.transaction(
     async (tx) => {
       const [existingData] = await tx
         .select({
-          id: schedulerRecordTable.id,
           record: schedulerRecordTable.record
         })
         .from(schedulerRecordTable)
-        .where(eq(schedulerRecordTable.schedulerId, data.schedulerId))
+        .where(eq(schedulerRecordTable.id, data.id))
         .for("update");
 
       if (!existingData) {
-        await tx.insert(schedulerRecordTable).values(data);
-        return;
+        throw new Error(`Scheduler record not found ${JSON.stringify(data)}}`);
       }
 
-      const { id, record } = existingData;
+      const { record } = existingData;
       const combinedRecord = merge(record, data.record);
 
       await tx
@@ -57,7 +74,7 @@ export const insertOrUpdateSchedulerRecordData = async (
           lastTriggerAt: data.lastTriggerAt,
           lastEndAt: data.lastEndAt
         })
-        .where(eq(schedulerRecordTable.id, id));
+        .where(eq(schedulerRecordTable.id, data.id));
     },
     {
       isolationLevel: "read committed"
@@ -66,7 +83,7 @@ export const insertOrUpdateSchedulerRecordData = async (
 };
 
 export const updateSchedulerRecordCount = async (
-  schedulerId: string,
+  schedulerRecordId: string,
   keyword: string,
   successCount: number,
   failedCount: number
@@ -76,13 +93,13 @@ export const updateSchedulerRecordCount = async (
       const [{ record: _record }] = await tx
         .select({ record: schedulerRecordTable.record })
         .from(schedulerRecordTable)
-        .where(eq(schedulerRecordTable.schedulerId, schedulerId))
+        .where(eq(schedulerRecordTable.id, schedulerRecordId))
         .for("update");
 
       const keywordRecord = _record?.[keyword];
 
       if (!keywordRecord) {
-        throw new Error(`Keyword not found ${schedulerId}, ${keyword}`);
+        throw new Error(`Keyword not found ${schedulerRecordId}, ${keyword}`);
       }
 
       const _currentCount = keywordRecord.currentCount + successCount;
@@ -97,14 +114,18 @@ export const updateSchedulerRecordCount = async (
         }
       };
 
+      const MINIMUM_ALLOWED_COUNT_DIFFERENCE = 5;
       await tx
         .update(schedulerRecordTable)
         .set({
           record: record,
           lastEndAt:
-            _currentCount === keywordRecord.totalCount ? new Date() : null
+            Math.abs(_currentCount + _failedCount - keywordRecord.totalCount) <=
+            MINIMUM_ALLOWED_COUNT_DIFFERENCE
+              ? new Date()
+              : null
         })
-        .where(eq(schedulerRecordTable.schedulerId, schedulerId));
+        .where(eq(schedulerRecordTable.id, schedulerRecordId));
     },
     {
       isolationLevel: "read committed"

@@ -6,7 +6,7 @@ import {
 } from "../utils/jobstreet.utils";
 import {
   insertJobData,
-  insertOrUpdateSchedulerRecordData,
+  updateSchedulerRecordData,
   updateSchedulerRecordCount
 } from "../scrapper.service";
 import { SQS } from "@aws-sdk/client-sqs";
@@ -16,18 +16,20 @@ import { baseConfig } from "../../../configs";
 export const analyzeSchema = z.object({
   id: z.string(),
   keyword: z.string(),
-  sourcePlatform: z.nativeEnum(JobSourcePlatformEnum)
+  sourcePlatform: z.nativeEnum(JobSourcePlatformEnum),
+  schedulerRecordId: z.string()
 });
 
 export const processSchema = z.object({
   id: z.string(),
   keyword: z.string(),
   jobIds: z.array(z.string()).nonempty(),
-  sourcePlatform: z.nativeEnum(JobSourcePlatformEnum)
+  sourcePlatform: z.nativeEnum(JobSourcePlatformEnum),
+  schedulerRecordId: z.string()
 });
 
 export const jobStreetAnalyze = async (data: z.infer<typeof analyzeSchema>) => {
-  const { id, keyword, sourcePlatform } = data;
+  const { id, keyword, sourcePlatform, schedulerRecordId } = data;
 
   console.info("Starting Jobstreet Analyze", { id, keyword });
   const firstPageData = await getJobStreetData(keyword, 1);
@@ -45,21 +47,45 @@ export const jobStreetAnalyze = async (data: z.infer<typeof analyzeSchema>) => {
   const dataPerPage = jobIds.length;
   const jobIdsBatch = [jobIds];
 
-  const getDataPromises = [];
+  const getDataPromises: Array<() => Promise<void>> = [];
 
   for (let i = 2; i <= Math.ceil(totalJobsCount / dataPerPage); i++) {
-    getDataPromises.push(
-      (async () => {
-        const data = await getJobStreetData(keyword, i);
+    console.info("Getting Job Street Data", {
+      id,
+      keyword,
+      i,
+      totalPage: Math.ceil(totalJobsCount / dataPerPage),
+      totalJobsCount,
+      dataPerPage
+    });
 
-        if (data?.jobIds) {
-          jobIdsBatch.push(data.jobIds);
-        }
-      })()
-    );
+    getDataPromises.push(async () => {
+      const data = await getJobStreetData(keyword, i);
+
+      if (data?.jobIds) {
+        jobIdsBatch.push(data.jobIds);
+      }
+    });
   }
 
-  await Promise.all(getDataPromises);
+  const batchSize = 5;
+
+  for (let i = 0; i < getDataPromises.length; i += batchSize) {
+    const batch = getDataPromises.slice(i, i + batchSize);
+    const result = await Promise.allSettled(batch.map((fn) => fn()));
+    console.info("result", { result });
+  }
+
+  await updateSchedulerRecordData({
+    record: {
+      [keyword]: {
+        totalCount: totalJobsCount,
+        currentCount: 0,
+        failedCount: 0
+      }
+    },
+    id: schedulerRecordId
+  });
 
   const sqs = new SQS({
     region: "ap-southeast-1"
@@ -74,49 +100,43 @@ export const jobStreetAnalyze = async (data: z.infer<typeof analyzeSchema>) => {
       MessageBody: JSON.stringify({
         id,
         keyword,
-        jobIds,
-        sourcePlatform
-      } as z.infer<typeof processSchema>)
+        jobIds: jobIds as z.infer<typeof processSchema.shape.jobIds>,
+        sourcePlatform,
+        schedulerRecordId: schedulerRecordId
+      } satisfies z.infer<typeof processSchema>)
     });
-  });
-
-  const insertRecordPromises = insertOrUpdateSchedulerRecordData({
-    record: {
-      [keyword]: {
-        totalCount: totalJobsCount,
-        currentCount: 0,
-        failedCount: 0
-      }
-    },
-    lastTriggerAt: new Date(),
-    schedulerId: id
   });
 
   console.info("Sending Message Promises and insert Schduler Record Data", {
     id,
     keyword,
-    jobIds
+    jobIdsBatch,
+    jobIdsBatchLength: jobIdsBatch.length
   });
-  const promises = [...sendMessagePromises, insertRecordPromises];
-  await Promise.all(promises);
 
+  await Promise.all(sendMessagePromises);
   console.info("Job Street Analyze - Completed", { id, keyword });
-  //   res.ok();
 };
 
 export const jobStreetProcess = async (data: z.infer<typeof processSchema>) => {
-  const { id, keyword, jobIds } = data;
+  const { id, keyword, jobIds, schedulerRecordId } = data;
 
   // get details
-  console.info("Getting job details", { id, keyword, jobIds });
+  console.info("Getting job details", {
+    id,
+    schedulerRecordId,
+    keyword,
+    jobIds
+  });
 
   const promises = jobIds.map((jobId) => async () => {
     return await getJobStreetDetails(jobId, id);
   });
-  const batchSize = 5;
+  const batchSize = 3;
   const result: PromiseSettledResult<InsertJob>[] = [];
 
   for (let i = 0; i < promises.length; i += batchSize) {
+    console.log(`running batch ${i}`);
     const batch = promises.slice(i, i + batchSize);
     const _result = await Promise.allSettled(batch.map((fn) => fn()));
     result.push(..._result);
@@ -144,7 +164,7 @@ export const jobStreetProcess = async (data: z.infer<typeof processSchema>) => {
   // update recordTable
   console.info("Updating sechdulerRecordCount", { id, keyword, jobIds });
   await updateSchedulerRecordCount(
-    id,
+    schedulerRecordId,
     keyword,
     successDetails.length,
     failedDetails.length

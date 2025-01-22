@@ -1,5 +1,5 @@
 import React from "react";
-import SchedulerConfiguration from "../../../../../components/scrapper/scheduler-configuration";
+import SchedulerConfiguration from "../../../../components/scrapper/scheduler-configuration";
 import { SchedulerTypeEnum } from "@potato-lab/db";
 
 const ScrapperConfiguration = () => {

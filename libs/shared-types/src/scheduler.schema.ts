@@ -55,9 +55,16 @@ export const updateSchedulerSchema = z
 export const selectSchedulerSchema = z
   .object(_selectSchedulerSchema.shape)
   .extend({
-    record: _selectSchedulerRecordSchema.shape.record.nullable(),
-    lastTriggerAt: z.coerce.date().optional(), //_selectSchedulerRecordSchema.shape.lastTriggerAt.nullable(),
-    lastEndAt: z.coerce.date().optional() //_selectSchedulerRecordSchema.shape.lastEndAt.nullable()
+    records: z
+      .array(
+        z.object({
+          id: _selectSchedulerRecordSchema.shape.id,
+          record: _selectSchedulerRecordSchema.shape.record.nullable(),
+          lastTriggerAt: z.coerce.date().optional(),
+          lastEndAt: z.coerce.date().optional()
+        })
+      )
+      .nullable()
   })
   .extend(_commonSchame.shape);
 

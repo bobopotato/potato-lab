@@ -12,7 +12,7 @@ import {
   TooltipProvider,
   TooltipContent,
   TooltipTrigger,
-  Loader,
+  LoadingWrapper,
   Separator
 } from "@potato-lab/ui";
 import { Plus } from "lucide-react";
@@ -20,10 +20,10 @@ import Link from "next/link";
 import React from "react";
 import { toast } from "sonner";
 import { SelectScheduler } from "@potato-lab/shared-types";
-import { getErrorMessage } from "../../../../utils/error.util";
-import { parseCronExpression } from "../../../../utils/cron.util";
-import { formatDateTime } from "../../../../utils/date.util";
-import { useJobsScrapperQuery } from "../../../../queries/use-jobs-scrapper-query";
+import { getErrorMessage } from "../../../utils/error.util";
+import { parseCronExpression } from "../../../utils/cron.util";
+import { formatDateTime } from "../../../utils/date.util";
+import { useJobsScrapperQuery } from "../../../queries/use-jobs-scrapper-query";
 
 const JobsScrapper = () => {
   const { isPending, data, error, refetch } = useJobsScrapperQuery();
@@ -43,7 +43,7 @@ const JobsScrapper = () => {
   }
 
   return (
-    <Loader isLoading={isPending}>
+    <LoadingWrapper isLoading={isPending}>
       <div className="flex flex-row items-center justify-between">
         <h1 className="text-2xl">Jobs Scrapper</h1>
         <TooltipProvider delayDuration={200}>
@@ -63,12 +63,12 @@ const JobsScrapper = () => {
           </Tooltip>
         </TooltipProvider>
       </div>
-      <div className="my-5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+      <div className="my-5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3  gap-4">
         {data?.map((item) => (
           <ScrapperCard key={item.id} data={item} />
         ))}
       </div>
-    </Loader>
+    </LoadingWrapper>
   );
 };
 
@@ -95,9 +95,17 @@ const ScrapperCard = ({ data }: { data: SelectScheduler }) => {
         </CardContent>
         <CardFooter className="flex flex-col items-end gap-2 text-sm text-gray-500">
           <p>Last triggered at:</p>
-          <p className="text-xs">{formatDateTime(data.lastTriggerAt) || "-"}</p>
+          <p className="text-xs">
+            {data.records?.[0]?.lastTriggerAt
+              ? formatDateTime(data.records[0].lastTriggerAt)
+              : "-"}
+          </p>
           <p>Last success at</p>
-          <p className="text-xs">{formatDateTime(data.lastEndAt) || "-"}</p>
+          <p className="text-xs">
+            {data.records?.[0]?.lastEndAt
+              ? formatDateTime(data.records[0].lastEndAt)
+              : "-"}
+          </p>
         </CardFooter>
       </Card>
     </Link>

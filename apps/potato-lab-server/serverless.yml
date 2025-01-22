@@ -6,6 +6,18 @@ provider:
   name: aws
   runtime: nodejs20.x
   timeout: 25 # optional, in seconds, default is 6
+  environment:
+    ACCESS_TOKEN_SECRET: ${env:ACCESS_TOKEN_SECRET}
+    REFRESH_TOKEN_SECRET: ${env:REFRESH_TOKEN_SECRET}
+    DATABASE_URL: ${env:DATABASE_URL}
+    STAGE: ${env:STAGE}
+    AWS_SG_REGION: ${env:AWS_SG_REGION}
+    BASE_AWS_LAMBDA_URL: ${env:BASE_AWS_LAMBDA_URL}
+    AWS_SQS_JOB_SCRAPPER_ANALYZE_QUEUE_NAME: ${env:AWS_SQS_JOB_SCRAPPER_ANALYZE_QUEUE_NAME}
+    AWS_SQS_JOB_SCRAPPER_PROCESS_QUEUE_NAME: ${env:AWS_SQS_JOB_SCRAPPER_PROCESS_QUEUE_NAME}
+    AWS_SCRAPPER_LAMBDA_ARN: ${env:AWS_SCRAPPER_LAMBDA_ARN}
+    AWS_SCRAPPER_LAMBDA_NAME: ${env:AWS_SCRAPPER_LAMBDA_NAME}
+    AWS_RULE_ARN: ${env:AWS_RULE_ARN}
   iam:
     role:
       name: serverless-my-super-role-${env:STAGE}
@@ -56,11 +68,17 @@ functions:
   jobScrapperAnalyzeReceiver:
     handler: ./src/index.jobScrapperAnalyzeReceiver
     events:
-      - sqs: arn:aws:sqs:ap-southeast-1:767397903484:jobScrapperAnalyzeQueue
+      - sqs:
+          arn: arn:aws:sqs:ap-southeast-1:767397903484:jobScrapperAnalyzeQueue-${env:STAGE}
+          batchSize: 1
+          maximumConcurrency: 10
   jobScrapperProcessReceiver:
     handler: ./src/index.jobScrapperProcessReceiver
     events:
-      - sqs: arn:aws:sqs:ap-southeast-1:767397903484:jobScrapperProcessQueue
+      - sqs:
+          arn: arn:aws:sqs:ap-southeast-1:767397903484:jobScrapperProcessQueue-${env:STAGE}
+          batchSize: 1
+          maximumConcurrency: 10
 
 custom:
   dotenv:
@@ -73,6 +91,8 @@ custom:
     endpoint: http://0.0.0.0:9324
     region: ap-southeast-1
     skipCacheInvalidation: false
+    batchSize: 1
+    maximumConcurrency: 10
 
 plugins:
   - serverless-offline-sqs

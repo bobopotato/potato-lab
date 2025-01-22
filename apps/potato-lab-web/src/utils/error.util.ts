@@ -5,7 +5,9 @@ export const getErrorMessage = (
   fallbackMessage = "Something went wrong. Please try again."
 ) => {
   if (error instanceof AxiosError) {
-    return String(error.response?.data?.message) || fallbackMessage;
+    return error.response?.data?.message
+      ? String(error.response.data.message)
+      : fallbackMessage;
   }
   return fallbackMessage;
 };

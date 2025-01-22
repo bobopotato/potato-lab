@@ -43,7 +43,8 @@ const AuthProvider = ({
     // force logout
     if (!_userData) {
       localStorage.removeItem("accessToken");
-      router.refresh();
+      // router.refresh();
+      router.push("/sign-in");
     }
   }, [_userData, router]);
 

@@ -16,6 +16,13 @@ jobs:
       STAGE: staging
       ACCESS_TOKEN_SECRET: ${{ secrets.ACCESS_TOKEN_SECRET }}
       REFRESH_TOKEN_SECRET: ${{ secrets.REFRESH_TOKEN_SECRET }}
+      AWS_SG_REGION: ap-southeast-1
+      BASE_AWS_LAMBDA_URL: https://9vi1jgliwh.execute-api.ap-southeast-1.amazonaws.com
+      AWS_SQS_JOB_SCRAPPER_ANALYZE_QUEUE_NAME: https://sqs.ap-southeast-1.amazonaws.com/767397903484/jobScrapperAnalyzeQueue-staging
+      AWS_SQS_JOB_SCRAPPER_PROCESS_QUEUE_NAME: https://sqs.ap-southeast-1.amazonaws.com/767397903484/jobScrapperProcessQueue-staging
+      AWS_SCRAPPER_LAMBDA_ARN: arn:aws:lambda:ap-southeast-1:767397903484:function:serverless-potato-lab-staging-scrapperApi
+      AWS_SCRAPPER_LAMBDA_NAME: serverless-potato-lab-staging-scrapperApi
+      AWS_RULE_ARN: arn:aws:events:ap-southeast-1:767397903484:rule
     steps:
       - run: |
           echo "Deploying to Staging Environment with database URL: $DATABASE_URL"
