@@ -1,9 +1,13 @@
 import { SQS } from "@aws-sdk/client-sqs";
 import { Request, Response } from "express";
-import { getSchedulerById } from "./scrapper.service";
+import {
+  getSchedulerById,
+  insertSchedulerRecordData
+} from "./scrapper.service";
 import { z } from "zod";
 import { analyzeSchema } from "./receivers/job-scrapper.strategy";
 import { baseConfig } from "../../configs";
+import { JobSourcePlatformEnum } from "@potato-lab/db";
 
 export const jobInit = async (req: Request, res: Response) => {
   // body from event bridge is buffer type
@@ -31,6 +35,12 @@ export const jobInit = async (req: Request, res: Response) => {
     return;
   }
 
+  const schedulerRecord = await insertSchedulerRecordData({
+    lastTriggerAt: new Date(),
+    schedulerId: id,
+    record: {}
+  });
+
   const sqs = new SQS({
     region: "ap-southeast-1"
   });
@@ -46,8 +56,9 @@ export const jobInit = async (req: Request, res: Response) => {
             MessageBody: JSON.stringify({
               id,
               keyword,
-              sourcePlatform
-            } as z.infer<typeof analyzeSchema>)
+              sourcePlatform: sourcePlatform as JobSourcePlatformEnum,
+              schedulerRecordId: schedulerRecord.id
+            } satisfies z.infer<typeof analyzeSchema>)
           });
           console.info("Done with SQS Message", { id, keyword });
         })()
@@ -58,7 +69,7 @@ export const jobInit = async (req: Request, res: Response) => {
   await Promise.all(sendMessagePromises);
   console.info("Job Initiated", {
     data,
-    sendMessagePromises
+    sendMessagePromisesLength: sendMessagePromises.length
   });
   res.ok();
 };

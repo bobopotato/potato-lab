@@ -1,6 +1,10 @@
 import { merge } from "lodash";
 import { eq } from "drizzle-orm";
-import { InsertJob, InsertSchedulerRecord } from "@potato-lab/shared-types";
+import {
+  InsertJob,
+  InsertSchedulerRecord,
+  UpdateSchedulerRecord
+} from "@potato-lab/shared-types";
 import {
   conflictUpdateAllExcept,
   jobTable,
@@ -32,55 +36,50 @@ export const insertJobData = async (data: InsertJob[]) => {
     });
 };
 
-export const insertOrUpdateSchedulerRecordData = async (
+export const insertSchedulerRecordData = async (
   data: InsertSchedulerRecord
 ) => {
-  const schedulerRecord = await db.transaction(
+  const [result] = await db
+    .insert(schedulerRecordTable)
+    .values(data)
+    .returning();
+  return result;
+};
+
+export const updateSchedulerRecordData = async (
+  data: Partial<UpdateSchedulerRecord> &
+    Required<Pick<UpdateSchedulerRecord, "id">>
+) => {
+  await db.transaction(
     async (tx) => {
       const [existingData] = await tx
         .select({
-          id: schedulerRecordTable.id,
           record: schedulerRecordTable.record
         })
         .from(schedulerRecordTable)
-        .where(eq(schedulerRecordTable.schedulerId, data.schedulerId))
+        .where(eq(schedulerRecordTable.id, data.id))
         .for("update");
 
       if (!existingData) {
-        const [schedulerRecord] = await tx
-          .insert(schedulerRecordTable)
-          .values(data)
-          .returning();
-        return schedulerRecord;
+        throw new Error(`Scheduler record not found ${JSON.stringify(data)}}`);
       }
 
-      const { id, record } = existingData;
+      const { record } = existingData;
       const combinedRecord = merge(record, data.record);
 
-      const [schedulerRecord] = await tx
+      await tx
         .update(schedulerRecordTable)
         .set({
           record: combinedRecord,
           lastTriggerAt: data.lastTriggerAt,
           lastEndAt: data.lastEndAt
         })
-        .where(eq(schedulerRecordTable.id, id))
-        .returning();
-
-      return schedulerRecord;
+        .where(eq(schedulerRecordTable.id, data.id));
     },
     {
       isolationLevel: "read committed"
     }
   );
-
-  if (!schedulerRecord) {
-    throw new Error(
-      `Failed to insert or update scheduler record: JSON.stringify(data)`
-    );
-  }
-
-  return schedulerRecord;
 };
 
 export const updateSchedulerRecordCount = async (
