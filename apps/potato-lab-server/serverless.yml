@@ -10,6 +10,7 @@ provider:
     ACCESS_TOKEN_SECRET: ${env:ACCESS_TOKEN_SECRET}
     REFRESH_TOKEN_SECRET: ${env:REFRESH_TOKEN_SECRET}
     DATABASE_URL: ${env:DATABASE_URL}
+    STAGE: ${env:STAGE}
     AWS_SG_REGION: ${env:AWS_SG_REGION}
     BASE_AWS_LAMBDA_URL: ${env:BASE_AWS_LAMBDA_URL}
     AWS_SQS_JOB_SCRAPPER_ANALYZE_QUEUE_NAME: ${env:AWS_SQS_JOB_SCRAPPER_ANALYZE_QUEUE_NAME}
@@ -68,14 +69,16 @@ functions:
     handler: ./src/index.jobScrapperAnalyzeReceiver
     events:
       - sqs:
-          arn: arn:aws:sqs:ap-southeast-1:767397903484:jobScrapperAnalyzeQueue
-          batchSize: 10
+          arn: arn:aws:sqs:ap-southeast-1:767397903484:jobScrapperAnalyzeQueue-${env:STAGE}
+          batchSize: 1
+          maximumConcurrency: 10
   jobScrapperProcessReceiver:
     handler: ./src/index.jobScrapperProcessReceiver
     events:
       - sqs:
-          arn: arn:aws:sqs:ap-southeast-1:767397903484:jobScrapperProcessQueue
-          batchSize: 10
+          arn: arn:aws:sqs:ap-southeast-1:767397903484:jobScrapperProcessQueue-${env:STAGE}
+          batchSize: 1
+          maximumConcurrency: 10
 
 custom:
   dotenv:
@@ -88,7 +91,8 @@ custom:
     endpoint: http://0.0.0.0:9324
     region: ap-southeast-1
     skipCacheInvalidation: false
-    batchSize: 10
+    batchSize: 1
+    maximumConcurrency: 10
 
 plugins:
   - serverless-offline-sqs
