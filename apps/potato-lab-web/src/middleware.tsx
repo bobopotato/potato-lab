@@ -9,17 +9,18 @@ const isPublicRoute = (url: string) => {
 };
 
 export async function middleware(request: NextRequest) {
-  const { data } = await getUserCookies();
+  const userCookies = request.cookies.get("user")?.value;
+  const user = userCookies && JSON.parse(userCookies);
 
   const _isPublicRoute = isPublicRoute(request.nextUrl.pathname);
 
-  if (_isPublicRoute && data?.user) {
+  if (_isPublicRoute && user) {
     return NextResponse.redirect(
       new URL("/dashboard/introduction", request.url)
     );
   }
 
-  if (!_isPublicRoute && !data?.user) {
+  if (!_isPublicRoute && !user) {
     return NextResponse.redirect(new URL("/sign-in", request.url));
   }
 
