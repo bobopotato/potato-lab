@@ -18,6 +18,7 @@ provider:
     AWS_SCRAPPER_LAMBDA_ARN: ${env:AWS_SCRAPPER_LAMBDA_ARN}
     AWS_SCRAPPER_LAMBDA_NAME: ${env:AWS_SCRAPPER_LAMBDA_NAME}
     AWS_RULE_ARN: ${env:AWS_RULE_ARN}
+    GOOGLE_MAP_API_KEY: ${env:GOOGLE_MAP_API_KEY}
   iam:
     role:
       name: serverless-my-super-role-${env:STAGE}

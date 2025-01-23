@@ -177,7 +177,8 @@ export const insertJobData = async (data: InsertJob[]) => {
       batch: i,
       total: jobs.length
     });
-    await Promise.allSettled(promises.map((fn) => fn()));
+    const result = await Promise.allSettled(promises.map((fn) => fn()));
+    console.info({ insertJobCompanyInfo: result });
   }
 };
 
