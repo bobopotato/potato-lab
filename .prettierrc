@@ -1,4 +1,9 @@
 {
   "singleQuote": false,
-  "trailingComma": "none"
+  "trailingComma": "none",
+  "tailwindStylesheet": "./libs/ui/src/styles/global.css",
+  "tailwindConfig": "./libs/ui/src/tailwind/tailwind.config.js",
+  "plugins": [
+    "prettier-plugin-tailwindcss"
+  ]
 }

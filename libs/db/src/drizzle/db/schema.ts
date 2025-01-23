@@ -11,7 +11,8 @@ import {
   uniqueIndex,
   primaryKey,
   text,
-  boolean
+  boolean,
+  geometry
 } from "drizzle-orm/pg-core";
 
 const enumToPgEnum = <T extends Record<string, any>>(
@@ -208,7 +209,13 @@ export const jobTable = pgTable(
     createdAt: timestamp("createdAt").defaultNow(),
     schedulerId: uuid("schedulerId")
       .references(() => schedulerTable.id)
-      .notNull()
+      .notNull(),
+    companyInfoId: uuid("companyInfoId").references(
+      () => jobCompanyInfoTable.id
+    ),
+    companyInfoNotExistId: uuid("companyInfoNotExistId").references(
+      () => jobCompanyInfoNotExistTable.id
+    )
   },
   (table) => [
     index("detailsTemplate_gin_idx").using(
@@ -218,14 +225,57 @@ export const jobTable = pgTable(
   ]
 );
 
+export const jobCompanyInfoTable = pgTable("JobCompanyInfo", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  name: varchar("name", { length: 256 }).notNull(),
+  businessName: varchar("businessName", { length: 256 }).notNull(),
+  openingHours: varchar("openingHours").array(), // day opening hours text
+  address: varchar("address", { length: 256 }),
+  locationGeometry: geometry("locationGeometry").notNull(),
+  phoneNumber: varchar("phoneNumber", { length: 256 }),
+  mapUrl: varchar("mapUrl", { length: 256 }).notNull(),
+  website: varchar("website", { length: 256 })
+});
+
+export const jobCompanyInfoNotExistTable = pgTable("JobCompanyInfoNotExist", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  name: varchar("name", { length: 256 }).notNull()
+});
+
 export const jobRelations = relations(jobTable, ({ one }) => {
   return {
     scheduler: one(schedulerTable, {
       fields: [jobTable.schedulerId],
       references: [schedulerTable.id]
+    }),
+    companyInfo: one(jobCompanyInfoTable, {
+      fields: [jobTable.companyInfoId],
+      references: [jobCompanyInfoTable.id]
+    }),
+    companyInfoNotExist: one(jobCompanyInfoNotExistTable, {
+      fields: [jobTable.companyInfoNotExistId],
+      references: [jobCompanyInfoNotExistTable.id]
     })
   };
 });
+
+export const jobCompanyInfoRelations = relations(
+  jobCompanyInfoTable,
+  ({ many }) => {
+    return {
+      jobs: many(jobTable)
+    };
+  }
+);
+
+export const jobCompanyInfoNotExistRelations = relations(
+  jobCompanyInfoNotExistTable,
+  ({ many }) => {
+    return {
+      jobs: many(jobTable)
+    };
+  }
+);
 
 export const userRelations = relations(userTable, ({ many }) => {
   return {

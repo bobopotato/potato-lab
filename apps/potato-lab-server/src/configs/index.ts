@@ -21,7 +21,9 @@ export const baseConfig = {
 
   awsScrapperLambdaArn: process.env.AWS_SCRAPPER_LAMBDA_ARN ?? "",
   awsScrapperLambdaName: process.env.AWS_SCRAPPER_LAMBDA_NAME ?? "",
-  awsRuleArn: process.env.AWS_RULE_ARN ?? ""
+  awsRuleArn: process.env.AWS_RULE_ARN ?? "",
+
+  googleMapApiKey: process.env.GOOGLE_MAP_API_KEY ?? ""
 };
 
 export enum TokenExpiration {
