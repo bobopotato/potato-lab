@@ -155,11 +155,11 @@ const SchedulerConfiguration = ({
 
   return (
     <LoadingWrapper isLoading={isPending}>
-      <div className="w-full flex flex-row gap-10 justify-evenly items-start">
+      <div className="flex w-full flex-row items-start justify-evenly gap-10">
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit((e) => mutate(e))}
-            className={cn("my-8 space-y-8 flex-auto")}
+            className={cn("my-8 flex-auto space-y-8")}
             onChange={() => {
               setFormData(form.getValues());
             }}
@@ -246,7 +246,7 @@ const SchedulerConfiguration = ({
                 render={({ field }) => (
                   <FormItem className="flex flex-col space-y-4">
                     <FormLabel htmlFor="frequencyExpression">
-                      <div className="flex flex-row  items-baseline gap-2">
+                      <div className="flex flex-row items-baseline gap-2">
                         <span>Custom Frequency Expression</span>
                         <TooltipProvider delayDuration={50}>
                           <Tooltip>
@@ -381,12 +381,12 @@ const SchedulerConfiguration = ({
                         return (
                           <span
                             key={index}
-                            className="group flex flex-row gap-2 items-center rounded-lg bg-primary-foreground p-2 pl-3 hover:outline outline-1 outline-red-600"
+                            className="group flex flex-row items-center gap-2 rounded-lg bg-primary-foreground p-2 pl-3 outline-1 outline-red-600 hover:outline"
                           >
                             <span>{item}</span>
                             <XCircleIcon
                               size={16}
-                              className="bg-red m-0 p-0 cursor-pointer group-hover:text-red-600"
+                              className="bg-red m-0 cursor-pointer p-0 group-hover:text-red-600"
                               onClick={() => {
                                 const newValue = field.value?.filter(
                                   (value, _index) => {
@@ -412,7 +412,7 @@ const SchedulerConfiguration = ({
           </form>
         </Form>
         {
-          <Card className="bg-primary-foreground w-[30%]">
+          <Card className="w-[30%] bg-primary-foreground">
             <CardHeader className="space-y-2">
               <CardTitle className="text-xl underline">
                 Scrapper Information
@@ -443,12 +443,12 @@ const SchedulerConfiguration = ({
                       : "-"}
                   </p>
                   <p>
-                    Last ended at:{" "}
-                    {defaultData.records?.[0]?.lastEndAt
-                      ? formatDateTime(defaultData.records[0].lastEndAt)
+                    Last Success At:{" "}
+                    {defaultData.records?.[0]?.lastSuccessAt
+                      ? formatDateTime(defaultData.records[0].lastSuccessAt)
                       : "-"}
                   </p>
-                  <div className="pt-5 flex flex-wrap justify-evenly gap-2">
+                  <div className="flex flex-wrap justify-evenly gap-2 pt-5">
                     <Button
                       isLoading={isTriggeringScrapper}
                       onClick={() => triggerScrapper(defaultData.id)}

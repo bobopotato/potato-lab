@@ -32,7 +32,7 @@ const JobsScrapper = () => {
     toast.error(getErrorMessage(error, "Something went wrong"));
 
     return (
-      <div className="h-full flex flex-col items-center justify-center gap-4">
+      <div className="flex h-full flex-col items-center justify-center gap-4">
         <h1>
           Something went wrong. Please try to refetch data again.{" "}
           {JSON.stringify(error)}
@@ -56,17 +56,15 @@ const JobsScrapper = () => {
               </Button>
             </TooltipTrigger>
             <TooltipContent side="left" sideOffset={10}>
-              <div className="bg-primary text-secondary rounded-lg p-1 px-4">
+              <div className="rounded-lg bg-primary p-1 px-4 text-secondary">
                 Add Scrapper
               </div>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
       </div>
-      <div className="my-5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3  gap-4">
-        {data?.map((item) => (
-          <ScrapperCard key={item.id} data={item} />
-        ))}
+      <div className="my-5 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+        {data?.map((item) => <ScrapperCard key={item.id} data={item} />)}
       </div>
     </LoadingWrapper>
   );
@@ -75,15 +73,15 @@ const JobsScrapper = () => {
 const ScrapperCard = ({ data }: { data: SelectScheduler }) => {
   return (
     <Link href={`./jobs-scrapper/${data.id}`}>
-      <Card className="bg-primary-foreground cursor-pointer hover:scale-[102.5%] transition-transform ease-in-out duration-200">
+      <Card className="cursor-pointer bg-primary-foreground transition-transform duration-200 ease-in-out hover:scale-[102.5%]">
         <CardHeader className="text-xl">
           <CardTitle>{data.name}</CardTitle>
           {data.description && (
             <CardDescription>{data.description}</CardDescription>
           )}
         </CardHeader>
-        <Separator className="bg-gray-500 w-[85%] m-auto mb-4" />
-        <CardContent className="grid md:grid-cols-2 gap-3 text-sm">
+        <Separator className="m-auto mb-4 w-[85%] bg-gray-500" />
+        <CardContent className="grid gap-3 text-sm md:grid-cols-2">
           <p>Frequency: </p>
           <p className="text-gray-400">
             {parseCronExpression(data.frequencyExpression)}
@@ -102,8 +100,8 @@ const ScrapperCard = ({ data }: { data: SelectScheduler }) => {
           </p>
           <p>Last success at</p>
           <p className="text-xs">
-            {data.records?.[0]?.lastEndAt
-              ? formatDateTime(data.records[0].lastEndAt)
+            {data.records?.[0]?.lastSuccessAt
+              ? formatDateTime(data.records[0].lastSuccessAt)
               : "-"}
           </p>
         </CardFooter>

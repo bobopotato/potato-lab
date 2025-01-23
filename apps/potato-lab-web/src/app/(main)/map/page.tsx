@@ -71,7 +71,7 @@ const JobMap = () => {
       return;
     }
 
-    setScrapper(scrapperOptions[1].value);
+    setScrapper(scrapperOptions[0].value);
   }, [scrapperOptions]);
 
   return (
