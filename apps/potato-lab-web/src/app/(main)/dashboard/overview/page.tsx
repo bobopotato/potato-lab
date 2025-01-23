@@ -6,7 +6,7 @@ import DashboardChart from "./dashboard-chart";
 import { useJobsScrapperQuery } from "../../../../queries/use-jobs-scrapper-query";
 
 const Overview = () => {
-  const { data, isLoading } = useJobsScrapperQuery();
+  const { data } = useJobsScrapperQuery();
 
   const info = useMemo(() => {
     if (!data) {

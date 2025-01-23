@@ -30,6 +30,7 @@ jobs:
       AWS_SCRAPPER_LAMBDA_ARN: arn:aws:lambda:ap-southeast-1:767397903484:function:serverless-potato-lab-staging-scrapperApi
       AWS_SCRAPPER_LAMBDA_NAME: serverless-potato-lab-staging-scrapperApi
       AWS_RULE_ARN: arn:aws:events:ap-southeast-1:767397903484:rule
+      GOOGLE_MAP_API_KEY: ${{ secrets.GOOGLE_MAP_API_KEY}}
     steps:
       - uses: actions/checkout@v4
         with:

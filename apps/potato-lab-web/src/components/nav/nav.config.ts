@@ -64,10 +64,15 @@ export const navigationItems: NavigationItem[] = [
   //   icon: SearchIcon
   // },
   {
-    title: "Favourite",
-    url: "/favourite",
+    title: "Job Data Map",
+    url: "/map",
     icon: FolderHeartIcon
   }
+  // {
+  //   title: "Favourite",
+  //   url: "/favourite",
+  //   icon: FolderHeartIcon
+  // }
   // {
   //   title: "News",
   //   url: "/news",

@@ -31,17 +31,17 @@ const Loader = ({
   label
 }: Pick<LoadingWrapperProps, "loadingComponent" | "label">) => {
   return (
-    <div className="absolute top-0 left-0 w-full h-full bg-black/40 flex flex-col gap-3 items-center justify-center">
+    <div className="absolute left-0 top-0 flex h-full max-h-screen w-full flex-col items-center justify-center gap-3 bg-black/40">
       {loadingComponent ? (
         loadingComponent
       ) : (
-        <Loader2 className="animate-spin size-10 items-center" />
+        <Loader2 className="size-10 animate-spin items-center" />
       )}
-      <div className="flex gap-2 items-baseline">
+      <div className="flex items-baseline gap-2">
         <span className="animate-pulse">{label}</span>
-        <div className="h-1 w-1 rounded-full bg-current animate-pulse delay-200"></div>
-        <div className="h-1 w-1 rounded-full bg-current animate-pulse delay-400"></div>
-        <div className="h-1 w-1 rounded-full bg-current animate-pulse delay-200"></div>
+        <div className="h-1 w-1 animate-pulse rounded-full bg-current delay-200"></div>
+        <div className="delay-400 h-1 w-1 animate-pulse rounded-full bg-current"></div>
+        <div className="h-1 w-1 animate-pulse rounded-full bg-current delay-200"></div>
       </div>
     </div>
   );

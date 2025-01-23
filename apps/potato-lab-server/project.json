@@ -39,14 +39,14 @@
       "options": {
         "cwd": "apps/potato-lab-server",
         "color": true,
-        "command": "sls deploy --stage staging --region ap-southeast-1"
+        "command": "db:migrate-staging && sls deploy --stage staging --region ap-southeast-1"
       },
       "configurations": {
         "staging": {
-          "command": "sls deploy --stage staging --region ap-southeast-1"
+          "command": "pnpm run db:migrate-staging && sls deploy --stage staging --region ap-southeast-1"
         },
         "production": {
-          "command": "sls deploy --stage production --region ap-southeast-1"
+          "command": "pnpm run db:migrate-prod && sls deploy --stage production --region ap-southeast-1"
         }
       }
     },

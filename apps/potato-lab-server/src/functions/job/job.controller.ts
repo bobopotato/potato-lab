@@ -53,3 +53,13 @@ export const updateJobFavourite = async (req: Request, res: Response) => {
     data
   });
 };
+
+export const getJobsCompanyInfo = async (req: Request, res: Response) => {
+  const schema = z.object({
+    schedulerId: z.string(),
+    keyword: z.string().optional()
+  });
+  const { schedulerId, keyword } = schema.parse(req.query);
+  const data = await jobService.getJobsWithCompanyInfo(schedulerId, keyword);
+  res.ok({ data });
+};

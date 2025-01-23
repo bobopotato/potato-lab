@@ -5,15 +5,18 @@ import { toast } from "sonner";
 import { getErrorMessage } from "../utils/error.util";
 
 export const useJobsQuery = (query: {
-  schedulerId: string;
+  schedulerId?: string;
   keyword?: string;
   page?: number;
   pageSize?: number;
 }) => {
   const { schedulerId, keyword, page, pageSize } = query;
+
   return useQuery({
     queryKey: ["jobs", schedulerId, keyword, page, pageSize],
     queryFn: async () => {
+      if (!schedulerId) return null;
+
       const res = await axiosAuth.get(`/job`, { params: query });
       const result = jobQuerySchema.safeParse(res.data.data);
 
