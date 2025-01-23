@@ -55,7 +55,7 @@ const JobListing = ({ params }: { params: { schedulerId: string } }) => {
     }
   }, [selectedJob]);
 
-  const { isLoading, error, refetch, data } = useJobsQuery({
+  const { isFetching, error, refetch, data } = useJobsQuery({
     schedulerId: params.schedulerId,
     keyword, //: query[0] as string | undefined,
     page, //: query[1] as number | undefined,
@@ -66,7 +66,7 @@ const JobListing = ({ params }: { params: { schedulerId: string } }) => {
     toast.error(getErrorMessage(error, "Something went wrong"));
 
     return (
-      <div className="h-full flex flex-col items-center justify-center gap-4">
+      <div className="flex h-full flex-col items-center justify-center gap-4">
         <h1>
           Something went wrong. Please try to refetch data again.{" "}
           {JSON.stringify(error)}
@@ -76,9 +76,9 @@ const JobListing = ({ params }: { params: { schedulerId: string } }) => {
     );
   }
 
-  if (!isLoading && !data?.data?.length) {
+  if (!isFetching && !data?.data?.length) {
     return (
-      <div className="h-full flex flex-col items-center justify-center gap-4">
+      <div className="flex h-full flex-col items-center justify-center gap-4">
         <h1>No job data found</h1>
         <Button onClick={() => refetch()}>Refetch data</Button>
         <h1>Or try to trigger to scrapper to start scrapping data again</h1>
@@ -92,9 +92,9 @@ const JobListing = ({ params }: { params: { schedulerId: string } }) => {
   }
 
   return (
-    <LoadingWrapper isLoading={isLoading}>
+    <LoadingWrapper isLoading={isFetching}>
       <div>
-        <div className="flex flex-row gap-4  w-full max-w-[100%]">
+        <div className="flex w-full max-w-[100%] flex-row gap-4">
           <div className="w-[40%] max-w-[40%]">
             <div className="bottom-[32px] space-y-5">
               <Input
@@ -120,19 +120,19 @@ const JobListing = ({ params }: { params: { schedulerId: string } }) => {
           </div>
           <ScrollArea
             viewportRef={scrollRef}
-            className="w-[calc(60%-20px)] rounded-lg !sticky top-8 h-[calc(100vh-var(--header-height)-90px-20px-64px-52px)]"
+            className="!sticky top-8 h-[calc(100vh-var(--header-height)-90px-20px-64px-52px)] w-[calc(60%-20px)] rounded-lg"
             scrollBarClassName="bg-app"
           >
-            <div className="h-full p-6 bg-primary-foreground  sticky top-0 left-0 [overflow-wrap:anywhere]">
+            <div className="sticky left-0 top-0 h-full bg-primary-foreground p-6 [overflow-wrap:anywhere]">
               {selectedJob?.detailsTemplate ? (
                 <div
-                  className="space-y-5 [&_ul]:list-disc [&_ul]:ml-5 [&_strong]:text-app"
+                  className="space-y-5 [&_strong]:text-app [&_ul]:ml-5 [&_ul]:list-disc"
                   dangerouslySetInnerHTML={{
                     __html: selectedJob.detailsTemplate.replace(/\\/g, "")
                   }}
                 />
               ) : (
-                <div className="h-[calc(100vh-var(--header-height)-90px-20px-64px-48px-52px)] flex justify-center items-center">
+                <div className="flex h-[calc(100vh-var(--header-height)-90px-20px-64px-48px-52px)] items-center justify-center">
                   Select any job to see details
                 </div>
               )}
@@ -140,7 +140,7 @@ const JobListing = ({ params }: { params: { schedulerId: string } }) => {
           </ScrollArea>
         </div>
         {!!data?.data.length && (
-          <div className="sticky pb-0 pt-4 bottom-8 bg-secondary">
+          <div className="sticky bottom-8 bg-secondary pb-0 pt-4">
             <div className="relative">
               <MyPagination
                 page={page}
@@ -148,7 +148,7 @@ const JobListing = ({ params }: { params: { schedulerId: string } }) => {
                 total={data?.pagination?.total || 0}
                 setPage={setPage}
               />
-              <div className="absolute h-[50px] w-full bottom-0 left-0 bg-secondary translate-y-8 -z-10"></div>
+              <div className="absolute bottom-0 left-0 -z-10 h-[50px] w-full translate-y-8 bg-secondary"></div>
             </div>
           </div>
         )}
@@ -169,7 +169,7 @@ const JobCardView = ({
   return (
     <Card
       className={cn(
-        "pt-6 bg-primary-foreground cursor-pointer transition-colors duration-200 ease-in-out hover:border-app",
+        "cursor-pointer bg-primary-foreground pt-6 transition-colors duration-200 ease-in-out hover:border-app",
         isSelected && "border-app"
       )}
       onClick={() => setSelectedJob(data)}

@@ -1,0 +1,786 @@
+{
+  "id": "3b05f4ea-5f37-479e-b8c0-0e6652198773",
+  "prevId": "af56ac10-0610-4247-a115-8679ffce48db",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.JobCompanyInfoNotExist": {
+      "name": "JobCompanyInfoNotExist",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.JobCompanyInfo": {
+      "name": "JobCompanyInfo",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "businessName": {
+          "name": "businessName",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "openingHours": {
+          "name": "openingHours",
+          "type": "varchar[]",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "address": {
+          "name": "address",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "locationGeometry": {
+          "name": "locationGeometry",
+          "type": "geometry(point)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "phoneNumber": {
+          "name": "phoneNumber",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "mapUrl": {
+          "name": "mapUrl",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "website": {
+          "name": "website",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.Job": {
+      "name": "Job",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar(256)",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "sourceJobId": {
+          "name": "sourceJobId",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "sourceUrl": {
+          "name": "sourceUrl",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "title": {
+          "name": "title",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "companyName": {
+          "name": "companyName",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "companyImageUrl": {
+          "name": "companyImageUrl",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "location": {
+          "name": "location",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "name": "description",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "position": {
+          "name": "position",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "detailsTemplate": {
+          "name": "detailsTemplate",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "jobListedAt": {
+          "name": "jobListedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "jobListingStatus": {
+          "name": "jobListingStatus",
+          "type": "JobListingStatus",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'VALID'"
+        },
+        "sourcePlatform": {
+          "name": "sourcePlatform",
+          "type": "JobSourcePlatform",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "isFavourite": {
+          "name": "isFavourite",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "schedulerId": {
+          "name": "schedulerId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "companyInfoId": {
+          "name": "companyInfoId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "companyInfoNotExistId": {
+          "name": "companyInfoNotExistId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "detailsTemplate_gin_idx": {
+          "name": "detailsTemplate_gin_idx",
+          "columns": [
+            {
+              "expression": "detailsTemplate",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last",
+              "opclass": "gin_trgm_ops"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "gin",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "Job_schedulerId_Scheduler_id_fk": {
+          "name": "Job_schedulerId_Scheduler_id_fk",
+          "tableFrom": "Job",
+          "tableTo": "Scheduler",
+          "columnsFrom": [
+            "schedulerId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "Job_companyInfoId_JobCompanyInfo_id_fk": {
+          "name": "Job_companyInfoId_JobCompanyInfo_id_fk",
+          "tableFrom": "Job",
+          "tableTo": "JobCompanyInfo",
+          "columnsFrom": [
+            "companyInfoId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "Job_companyInfoNotExistId_JobCompanyInfoNotExist_id_fk": {
+          "name": "Job_companyInfoNotExistId_JobCompanyInfoNotExist_id_fk",
+          "tableFrom": "Job",
+          "tableTo": "JobCompanyInfoNotExist",
+          "columnsFrom": [
+            "companyInfoNotExistId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.Portfolio": {
+      "name": "Portfolio",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "profileUrl": {
+          "name": "profileUrl",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "performance": {
+          "name": "performance",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "sourceUrl": {
+          "name": "sourceUrl",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "sourcePlatform": {
+          "name": "sourcePlatform",
+          "type": "CryptoSourcePlatform",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.Position": {
+      "name": "Position",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "symbol": {
+          "name": "symbol",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "size": {
+          "name": "size",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "entryPrice": {
+          "name": "entryPrice",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "margin": {
+          "name": "margin",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "portfolioId": {
+          "name": "portfolioId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "Position_portfolioId_Portfolio_id_fk": {
+          "name": "Position_portfolioId_Portfolio_id_fk",
+          "tableFrom": "Position",
+          "tableTo": "Portfolio",
+          "columnsFrom": [
+            "portfolioId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.SchedulerRecord": {
+      "name": "SchedulerRecord",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "record": {
+          "name": "record",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "lastTriggerAt": {
+          "name": "lastTriggerAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "lastSuccessAt": {
+          "name": "lastSuccessAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "schedulerId": {
+          "name": "schedulerId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "SchedulerRecord_schedulerId_Scheduler_id_fk": {
+          "name": "SchedulerRecord_schedulerId_Scheduler_id_fk",
+          "tableFrom": "SchedulerRecord",
+          "tableTo": "Scheduler",
+          "columnsFrom": [
+            "schedulerId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.Scheduler": {
+      "name": "Scheduler",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "name": "description",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "type": {
+          "name": "type",
+          "type": "SchedulerType",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "frequency": {
+          "name": "frequency",
+          "type": "SchedulerFrequency",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "frequencyExpression": {
+          "name": "frequencyExpression",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "sourcePlatform": {
+          "name": "sourcePlatform",
+          "type": "SourcePlatform[]",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "keywords": {
+          "name": "keywords",
+          "type": "varchar(256)[]",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "status": {
+          "name": "status",
+          "type": "Status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'ACTIVE'"
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "userId": {
+          "name": "userId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "Scheduler_userId_User_id_fk": {
+          "name": "Scheduler_userId_User_id_fk",
+          "tableFrom": "Scheduler",
+          "tableTo": "User",
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.user_favourite_portfolio": {
+      "name": "user_favourite_portfolio",
+      "schema": "",
+      "columns": {
+        "userId": {
+          "name": "userId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "portfolioId": {
+          "name": "portfolioId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "user_favourite_portfolio_userId_User_id_fk": {
+          "name": "user_favourite_portfolio_userId_User_id_fk",
+          "tableFrom": "user_favourite_portfolio",
+          "tableTo": "User",
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "user_favourite_portfolio_portfolioId_Portfolio_id_fk": {
+          "name": "user_favourite_portfolio_portfolioId_Portfolio_id_fk",
+          "tableFrom": "user_favourite_portfolio",
+          "tableTo": "Portfolio",
+          "columnsFrom": [
+            "portfolioId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "user_favourite_portfolio_userId_portfolioId_pk": {
+          "name": "user_favourite_portfolio_userId_portfolioId_pk",
+          "columns": [
+            "userId",
+            "portfolioId"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.User": {
+      "name": "User",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "email": {
+          "name": "email",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "password": {
+          "name": "password",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "imageUrl": {
+          "name": "imageUrl",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "name_idx": {
+          "name": "name_idx",
+          "columns": [
+            {
+              "expression": "name",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "email_idx": {
+          "name": "email_idx",
+          "columns": [
+            {
+              "expression": "email",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {
+    "public.CryptoSourcePlatform": {
+      "name": "CryptoSourcePlatform",
+      "schema": "public",
+      "values": [
+        "BINANCE",
+        "BYBIT",
+        "MEDX"
+      ]
+    },
+    "public.JobListingStatus": {
+      "name": "JobListingStatus",
+      "schema": "public",
+      "values": [
+        "VALID",
+        "EXPIRED"
+      ]
+    },
+    "public.JobSourcePlatform": {
+      "name": "JobSourcePlatform",
+      "schema": "public",
+      "values": [
+        "JOBSTREET",
+        "INDEED"
+      ]
+    },
+    "public.SchedulerFrequency": {
+      "name": "SchedulerFrequency",
+      "schema": "public",
+      "values": [
+        "HOURLY",
+        "DAILY",
+        "CUSTOM"
+      ]
+    },
+    "public.SchedulerType": {
+      "name": "SchedulerType",
+      "schema": "public",
+      "values": [
+        "JOBS_SCRAPPER",
+        "CRYPTO_SCRAPPER"
+      ]
+    },
+    "public.SourcePlatform": {
+      "name": "SourcePlatform",
+      "schema": "public",
+      "values": [
+        "BINANCE",
+        "BYBIT",
+        "MEDX",
+        "JOBSTREET",
+        "INDEED"
+      ]
+    },
+    "public.Status": {
+      "name": "Status",
+      "schema": "public",
+      "values": [
+        "ACTIVE",
+        "INACTIVE"
+      ]
+    }
+  },
+  "schemas": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}
