@@ -177,7 +177,7 @@ export const schedulerRecordTable = pgTable("SchedulerRecord", {
   id: uuid("id").primaryKey().defaultRandom(),
   record: jsonb("record").$type<_SchedulerRecord>().notNull(),
   lastTriggerAt: timestamp("lastTriggerAt").notNull(),
-  lastEndAt: timestamp("lastSuccessAt"),
+  lastSuccessAt: timestamp("lastSuccessAt"),
   schedulerId: uuid("schedulerId")
     .references(() => schedulerTable.id)
     .notNull()

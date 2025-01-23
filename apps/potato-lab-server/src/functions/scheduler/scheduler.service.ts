@@ -47,7 +47,7 @@ export const getUserScheduler = async (userId: string) => {
     .select({
       schedulerId: schedulerRecordTable.schedulerId,
       records:
-        sql`json_agg(${schedulerRecordTable} order by ${schedulerRecordTable.id} desc)`.as(
+        sql`json_agg(json_build_object('id', ${schedulerRecordTable.id}, 'record', ${schedulerRecordTable.record}, 'lastTriggerAt', ${schedulerRecordTable.lastTriggerAt} AT TIME ZONE 'UTC', 'lastSuccessAt', ${schedulerRecordTable.lastSuccessAt} AT TIME ZONE 'UTC') order by ${schedulerRecordTable.lastTriggerAt} desc)`.as(
           "records"
         )
     })

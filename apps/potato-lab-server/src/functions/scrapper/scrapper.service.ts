@@ -217,7 +217,7 @@ export const updateSchedulerRecordData = async (
         .set({
           record: combinedRecord,
           lastTriggerAt: data.lastTriggerAt,
-          lastEndAt: data.lastEndAt
+          lastSuccessAt: data.lastSuccessAt
         })
         .where(eq(schedulerRecordTable.id, data.id));
     },
@@ -264,7 +264,7 @@ export const updateSchedulerRecordCount = async (
         .update(schedulerRecordTable)
         .set({
           record: record,
-          lastEndAt:
+          lastSuccessAt:
             Math.abs(_currentCount + _failedCount - keywordRecord.totalCount) <=
             MINIMUM_ALLOWED_COUNT_DIFFERENCE
               ? new Date()
