@@ -27,7 +27,7 @@ const RootProviders = ({
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider userData={userData}>
-        <ThemeProvider attribute="class" defaultTheme="light">
+        <ThemeProvider attribute="class" defaultTheme="dark">
           <SidebarProvider
             style={
               {
