@@ -1,7 +1,11 @@
 import { InsertScheduler, UpdateScheduler } from "@potato-lab/shared-types";
 import { db } from "../../db";
-import { schedulerRecordTable, schedulerTable } from "@potato-lab/db";
-import { desc, eq, getTableColumns, sql } from "drizzle-orm";
+import {
+  schedulerRecordTable,
+  schedulerTable,
+  StatusEnum
+} from "@potato-lab/db";
+import { and, eq, getTableColumns, sql } from "drizzle-orm";
 import {
   EventBridge,
   PutRuleCommandInput,
@@ -61,7 +65,12 @@ export const getUserScheduler = async (userId: string) => {
       records: subQuery.records
     })
     .from(schedulerTable)
-    .where(eq(schedulerTable.userId, userId))
+    .where(
+      and(
+        eq(schedulerTable.userId, userId),
+        eq(schedulerTable.status, StatusEnum.ACTIVE)
+      )
+    )
     .leftJoin(subQuery, eq(schedulerTable.id, subQuery.schedulerId));
 
   return data;

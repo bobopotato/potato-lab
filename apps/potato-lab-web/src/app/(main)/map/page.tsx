@@ -26,7 +26,9 @@ const defaultLocation = {
 };
 
 const JobMap = () => {
-  const { latitude: userLat, longitude: userLng } = useGeolocation();
+  const { latitude: userLat, longitude: userLng } = useGeolocation({
+    enableHighAccuracy: true
+  });
   const { setSelectedMarker } = useMapStore();
 
   const [zoom, setZoom] = useState<number>(6);
