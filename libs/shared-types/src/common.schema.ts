@@ -14,6 +14,10 @@ export const booleanSchema = z
     return !!value;
   });
 
+export const optionalDateSchema = z
+  .union([z.null().transform(() => undefined), z.coerce.date()])
+  .optional();
+
 export const paginationResponseSchema = z.object({
   page: z.number(),
   pageSize: z.number(),

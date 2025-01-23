@@ -10,7 +10,7 @@ import {
   schedulerTable,
   SourcePlatformType
 } from "@potato-lab/db";
-import { uniqueArray } from "./common.schema";
+import { optionalDateSchema, uniqueArray } from "./common.schema";
 
 const _insertSchedulerSchema = createInsertSchema(schedulerTable);
 const _updateSchedulerSchema = createUpdateSchema(schedulerTable);
@@ -36,8 +36,8 @@ const _commonSchame = z.object({
   }),
   sourcePlatform: z.array(z.nativeEnum(SourcePlatformType)).nonempty(),
   keywords: uniqueArray(z.string(), true),
-  createdAt: z.coerce.date().optional(),
-  updatedAt: z.coerce.date().optional()
+  createdAt: optionalDateSchema,
+  updatedAt: optionalDateSchema
 });
 
 export const insertSchedulerSchema = z
@@ -60,8 +60,8 @@ export const selectSchedulerSchema = z
         z.object({
           id: _selectSchedulerRecordSchema.shape.id,
           record: _selectSchedulerRecordSchema.shape.record.nullable(),
-          lastTriggerAt: z.coerce.date().optional(),
-          lastEndAt: z.coerce.date().optional()
+          lastTriggerAt: optionalDateSchema,
+          lastSuccessAt: optionalDateSchema
         })
       )
       .nullable()

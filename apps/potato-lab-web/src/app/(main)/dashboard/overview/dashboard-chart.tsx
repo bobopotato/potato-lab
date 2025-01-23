@@ -94,16 +94,12 @@ const DashboardChart = () => {
           );
 
           acc.success.push({
-            lastTriggerAt: new Date(
-              Date.now() - Math.floor(Math.random() * 10000000000 * index)
-            ),
+            lastTriggerAt: record.lastTriggerAt,
             ...data.success
           });
 
           acc.failed.push({
-            lastTriggerAt: new Date(
-              Date.now() - Math.floor(Math.random() * 10000000000 * index)
-            ),
+            lastTriggerAt: record.lastTriggerAt,
             ...data.failed
           });
           return acc;
@@ -168,7 +164,7 @@ const DashboardChart = () => {
     setScrapperOptions(_scrapperOptions);
 
     if (!_scrapperOptions.find((item) => item.value === scrapper)) {
-      setScrapper(_scrapperOptions[1].value);
+      setScrapper(_scrapperOptions[0].value);
     }
 
     const selectedSchedulerRecords = data.find(
@@ -184,7 +180,7 @@ const DashboardChart = () => {
       <Card className="p-5 pt-10">
         <CardContent>
           <div className="flex flex-wrap justify-start gap-4">
-            <div className="flex flex-wrap gap-4 items-center">
+            <div className="flex flex-wrap items-center gap-4">
               <span>Scrapper: </span>
               <Select
                 value={scrapper}
@@ -206,11 +202,12 @@ const DashboardChart = () => {
               </Select>
             </div>
 
-            <div className="flex flex-wrap gap-4 items-center">
+            <div className="flex flex-wrap items-center gap-4">
               <span>Month: </span>
               <Select
                 defaultValue={month}
                 onValueChange={(value) => setMonth(value)}
+                disabled
               >
                 <SelectTrigger>
                   <SelectValue placeholder="-- Select month --" />
@@ -228,27 +225,29 @@ const DashboardChart = () => {
             </div>
           </div>
           {!scrapperOptions && !isLoading ? (
-            <div className="min-h-[400px] flex flex-col gap-4 justify-center items-center">
+            <div className="flex min-h-[400px] flex-col items-center justify-center gap-4">
               <h1>No Jobs Scrapper found. </h1>
               <Button asChild>
                 <Link href={`./jobs-scrapper`}>Create a Jobs Scraper Now</Link>
               </Button>
             </div>
           ) : chartData && chartConfig && !isLoading ? (
-            <>
+            <div className="gap-4 py-4">
+              <h1 className="text-xl text-app">Success data</h1>
               <Chart
                 schedulerId=""
                 chartConfig={chartConfig.success}
                 chartData={chartData.success}
               />
+              <h1 className="text-xl text-app">Failed data</h1>
               <Chart
                 schedulerId=""
                 chartConfig={chartConfig.failed}
                 chartData={chartData.failed}
               />
-            </>
+            </div>
           ) : (
-            <div className="min-h-[400px] flex flex-col gap-4 justify-center items-center">
+            <div className="flex min-h-[400px] flex-col items-center justify-center gap-4">
               {!isLoading && (
                 <>
                   <h1>No data collected yet. </h1>
@@ -341,7 +340,7 @@ const Chart = ({
         </ChartContainer>
       </ResponsiveContainer>
       {chartDataZero && (
-        <div className="absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] flex justify-center items-center">
+        <div className="absolute left-[50%] top-[50%] flex translate-x-[-50%] translate-y-[-50%] items-center justify-center">
           <p className="text-app">Chart data is empty.</p>
         </div>
       )}
