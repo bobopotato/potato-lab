@@ -83,7 +83,7 @@ const JobListing = ({ params }: { params: { schedulerId: string } }) => {
         <Button onClick={() => refetch()}>Refetch data</Button>
         <h1>Or try to trigger to scrapper to start scrapping data again</h1>
         <Button asChild>
-          <Link href={`/scrapper/jobs-scrapper/${params.schedulerId}`}>
+          <Link href={`/jobs-scrapper/${params.schedulerId}`}>
             Navigate to scrapper settings
           </Link>
         </Button>
